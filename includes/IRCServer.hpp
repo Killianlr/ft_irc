@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: robincanavaggio <robincanavaggio@studen    +#+  +:+       +#+        */
+/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/02 19:50:46 by robincanava      ###   ########.fr       */
+/*   Updated: 2025/04/02 20:44:29 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define IRCSERVER_HPP
 
 # include <iostream>
+# include <cstdio>
+# include <sstream>
 # include <string>
 # include <vector>
 # include <poll.h>
@@ -21,10 +23,11 @@
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <unistd.h>
+# include <cstdlib>
 
 typedef struct pollfd t_pollfd;
-const int	POLL_TIMEOUT = 1000;
 
+const int	POLL_TIMEOUT = 1000;
 
 struct Client
 {

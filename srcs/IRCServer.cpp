@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: robincanavaggio <robincanavaggio@studen    +#+  +:+       +#+        */
+/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/02 19:57:09 by robincanava      ###   ########.fr       */
+/*   Updated: 2025/04/02 20:48:32 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void	IRCServer::handleNewConnection()
 
 	Client	newClient = { new_socket, "", "", false };
 	clients[new_socket] = newClient;
+	std::cout << "New client connected: " << new_socket << std::endl;
 }
 
 void	IRCServer::handleClientData( int client_socket )
@@ -101,8 +102,10 @@ void	IRCServer::handleClientData( int client_socket )
 		close(client_socket);
 		clients.erase(client_socket);
 		// Remove from poll_fds as well
+		std::cout << "Client disconnected: " << client_socket << std::endl;
 		return ;
 	}
 	std::string	message(buffer);
+	std::cout << "Received from client " << client_socket << ": " << message << std::endl;
 	// IRC COMMANDS HERE
 }

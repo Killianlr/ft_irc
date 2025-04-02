@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: robincanavaggio <robincanavaggio@studen    +#+  +:+       +#+        */
+/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 19:04:35 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/02 19:50:10 by robincanava      ###   ########.fr       */
+/*   Updated: 2025/04/02 20:42:27 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,13 @@ int main( int argc, char *argv[] )
         return (1);
     }
     
-    int         port = std::stoi(argv[1]);
+    std::istringstream  iss(argv[1]);
+    int port;
+    if (!(iss >> port))
+    {
+        std::cerr << "Invalid port number: " << argv[1] << std::endl;
+        return (1);
+    }
     std::string password = argv[2];
     IRCServer   server(port, password);
     server.start();
