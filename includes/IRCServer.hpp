@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/02 20:44:29 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/03 20:24:26 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,12 @@ struct Client
 class IRCServer
 {
 	private:
-		int							port;
-		std::string					password;
-		int							server_fd;
-		std::vector<t_pollfd>		poll_fds;
-		std::map<int, Client>		clients;
+		int												port;
+		std::string										password;
+		int												server_fd;
+		std::vector<t_pollfd>							poll_fds;
+		std::map<int, Client>							clients;
+		std::map<std::string, void (IRCServer::*)( int, const std::string& )>	commands;
 
 		IRCServer&	operator=( const IRCServer& );
 		IRCServer( IRCServer& );
@@ -53,6 +54,13 @@ class IRCServer
 		void	runEventLoop();
 		void	handleNewConnection();
 		void	handleClientData( int );
+		void	handleCommand( int, const std::string& );
+
+		void	cmdNick( int, const std::string& );
+		void	cmdUser( int, const std::string& );
+		void	cmdJoin( int, const std::string& );
+		void	cmdPrivmsg( int, const std::string& );
+		void	cmdPing( int, const std::string& );
 	
 	public:
 		IRCServer( int, const std::string& );

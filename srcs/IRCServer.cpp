@@ -6,13 +6,21 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/02 20:48:32 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/03 20:31:16 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/IRCServer.hpp"
 
-IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) {}
+IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1)
+{
+	commands["NICK"] = &IRCServer::cmdNick;
+	commands["USER"] = &IRCServer::cmdUser;
+	commands["JOIN"] = &IRCServer::cmdJoin;
+	commands["PRIVMSG"] = &IRCServer::cmdPrivmsg;
+	commands["PING"] = &IRCServer::cmdPing;
+}
+
 IRCServer::~IRCServer() {}
 
 void    IRCServer::start()
@@ -95,7 +103,7 @@ void	IRCServer::handleNewConnection()
 
 void	IRCServer::handleClientData( int client_socket )
 {
-	char	buffer[1024] = {0};
+	char	buffer[1024];
 	int		valread = read(client_socket, buffer, 1024);
 	if (valread <= 0)
 	{
@@ -108,4 +116,18 @@ void	IRCServer::handleClientData( int client_socket )
 	std::string	message(buffer);
 	std::cout << "Received from client " << client_socket << ": " << message << std::endl;
 	// IRC COMMANDS HERE
+	handleCommand(client_socket, message);
+}
+
+void	IRCServer::handleCommand( int client_socket, const std::string& message )
+{
+	size_t		pos = message.find(' ');
+	std::string	command = message.substr();
+	std::string	param;
+	if (pos != std::string::npos)
+		param = message.substr(pos + 1);
+	else
+		param = "";
+	if (commands.find(command) != commands.end())
+		(this->*commands[command])(client_socket, param);
 }
