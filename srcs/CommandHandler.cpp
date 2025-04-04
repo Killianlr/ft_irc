@@ -6,11 +6,12 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/04 14:28:31 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/04 16:31:10 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CommandHandler.hpp"
+#include "IRCException.hpp"
 
 CommandHandler::CommandHandler( IRCServer* server ) : server(server)
 {
@@ -32,9 +33,18 @@ void	CommandHandler::handleCommand( int client_socket, const std::string& messag
 		param = message.substr(pos + 1);
 	else
 		param = "";
-    std::cout << command << std::endl;
-	if (commands.find(command) != commands.end())
-		(this->*commands[command])(client_socket, param);
+    try
+    {
+        if (commands.find(command) != commands.end())
+		    (this->*commands[command])(client_socket, param);
+        else
+            std::cerr << "Unknown command from client " << std::endl;
+    }
+    catch (const IRCException &e)
+    {
+        std::string errorMsg = e.what();
+        send(client_socket, errorMsg.c_str(), errorMsg.size(), 0);
+    }
 }
 
 void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
@@ -45,35 +55,56 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
     for (std::map<int, Client>::const_iterator cit = clients.begin(); cit != clients.end(); cit++)
     {
         if (cit->second.nickname == nickname)
-        {
-            std::string response = ":server 433 * " + nickname + " :Nickname is already in use\r\n";
-            send(client_socket, response.c_str(), response.size(), 0);
-            return ;
-        }
+            throw NicknameInUse(nickname);
     }
     server->getClient(client_socket)->nickname = nickname;
-    response = ":server 001 " + nickname + " :Welcome to the IRC Server\r\n";
-    send(client_socket, response.c_str(), response.size(), 0);
+    if (!server->getClient(client_socket)->username.empty())
+    {
+        response = ":server 001 " + nickname + " :Welcome to the IRC Server\r\n";
+        send(client_socket, response.c_str(), response.size(), 0);
+    }
 }
 
 void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 {
-    std::istringstream  iss(userInfo);
-    std::string         username, hostname, servername, realname;
+    if (server->isRegistered(client_socket))
+        throw AlreadyRegisteredException();
 
-    if (!(iss >> username >> hostname >> servername))
+    std::vector<std::string>    tokens;
+    std::string                 response, token;
+    size_t                      pos = 0, start = 0;
+
+    while ((pos = userInfo.find(' ', start)) != std::string::npos)
     {
-        std::string response = ":server 461 * USER : Not enough parameters\r\n";
-        send(client_socket, response.c_str(), response.size(), 0);
-        return ;
+        token = userInfo.substr(start, pos - start);
+        if (!token.empty())
+            tokens.push_back(token);
+        start = pos + 1;
+        if (userInfo[start] == ':')
+        {
+            tokens.push_back(userInfo.substr(start + 1));
+            break ;
+        }
     }
-    std::getline(iss, realname);
-    if (!realname.empty() && realname[0] == ':')
-        realname = realname.substr(1);
-    server->getClient(client_socket)->username = username;
-    server->getClient(client_socket)->realname = realname;
-    std::string response = ":server 001 " + server->getClient(client_socket)->nickname + ": \r\n";
-    send(client_socket, response.c_str(), response.size(), 0);
+    if (start < userInfo.size() && userInfo[start] != ':')
+        tokens.push_back(userInfo.substr(start));
+    
+    if (tokens.size() < 4)
+        throw NeedMoreParamsException("USER");
+
+    std::string username = tokens[0];
+    std::string hostname = (tokens.size() > 1 ? tokens[1] : "0");
+    std::string servername = (tokens.size() > 1 ? tokens[2] : "*");
+    std::string realname = tokens[3];
+
+    Client* client = server->getClient(client_socket);
+    client->username = username;
+    client->realname = realname;
+    if (!client->nickname.empty())
+    {
+        response = ":server 001 " + client->nickname + " :Welcome to the IRC Server\r\n";
+        send(client_socket, response.c_str(), response.size(), 0);
+    }
 }
 
 void    CommandHandler::cmdPing( int client_socket, const std::string& param )
@@ -85,32 +116,16 @@ void    CommandHandler::cmdPing( int client_socket, const std::string& param )
 void    CommandHandler::cmdPass( int client_socket, const std::string& password )
 {
     std::string response;
+    Client*     client = server->getClient(client_socket);
 
-    if (server->getClient(client_socket)->authenticated == true) // ERR_ALREADYREGISTERED (462)
-    {
-        response = ":server 462 * :You may not reregister\r\n";
-        send(client_socket, response.c_str(), response.size(), 0);
-        std::cout << response;
-    }
-    else if (password == server->getPassword())
-    {
-        server->getClient(client_socket)->authenticated = true;
-        response = ":server NOTICE * :*** Password accepted\r\n";
-        send(client_socket, response.c_str(), response.size(), 0);
-        std::cout << response;
-    }
-    else if (password == "") // ERR_NEEDMOREPARAMS (461)
-    {
-        response = ":server 461 * :Not enough parameters\r\n";
-        send(client_socket, response.c_str(), response.size(), 0);
-        std::cout << response;
-    }
-    else // ERR_PASSWDMISMATCH (464)
-    {
-        response = ":server 464 * :Bad password\r\n";
-        send(client_socket, response.c_str(), response.size(), 0);
-        std::cout << response;
-        // close(client_socket);
-        // server->removeClient(client_socket);
-    }
+    if (client->authenticated == true)
+        throw AlreadyRegisteredException();
+    if (password == "")
+        throw NeedMoreParamsException("PASS");
+    if (password != server->getPassword())
+        throw PasswordMismatchException();
+
+    client->authenticated = true;
+    response = ":server NOTICE * :Password accepted\r\n";
+    send(client_socket, response.c_str(), response.size(), 0);
 }

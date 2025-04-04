@@ -6,11 +6,11 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 19:04:35 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/02 20:42:27 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/04 14:59:26 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/IRCServer.hpp"
+#include "IRCServer.hpp"
 
 int main( int argc, char *argv[] )
 {

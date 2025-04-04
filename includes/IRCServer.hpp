@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/04 13:51:08 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/04 15:34:00 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ class IRCServer
 		Client*						getClient( int );
 		const std::map<int, Client>	getMapClient();
 		const std::string&			getPassword() const;
+		bool					isRegistered( int );
 };
 
 #endif

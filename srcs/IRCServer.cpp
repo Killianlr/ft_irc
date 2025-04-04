@@ -6,11 +6,12 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/04 14:41:23 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/04 16:22:43 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/IRCServer.hpp"
+#include "IRCServer.hpp"
+#include "IRCException.hpp"
 
 IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) {}
 
@@ -105,7 +106,15 @@ void	IRCServer::handleClientData( int client_socket )
 	{
 		close(client_socket);
 		clients.erase(client_socket);
-		// Remove from poll_fds as well
+		clientBuffers.erase(client_socket);
+		for (std::vector<t_pollfd>::iterator it = poll_fds.begin(); it != poll_fds.end(); it++)
+		{
+			if (it->fd == client_socket)
+			{
+				poll_fds.erase(it);
+				break ;
+			}
+		}
 		std::cout << "Client disconnected: " << client_socket << std::endl;
 		return ;
 	}
@@ -137,4 +146,13 @@ const std::map<int, Client>	IRCServer::getMapClient()
 const std::string&	IRCServer::getPassword() const
 {
 	return (this->password);
+}
+
+bool	IRCServer::isRegistered( int socket )
+{
+	Client* client = getClient(socket);
+
+	if (client->nickname != "" && client->username != "" && client->authenticated == true)
+		return (true);
+	return (false);
 }
