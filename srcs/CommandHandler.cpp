@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/04 16:31:10 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/05 15:43:10 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,17 @@ void	CommandHandler::handleCommand( int client_socket, const std::string& messag
 
 void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 {
-    std::map<int, Client>   clients = server->getMapClient();
-    std::string             response;
+    std::vector<const Client*>  clients = server->getListClients();
+    std::string                 response;
 
-    for (std::map<int, Client>::const_iterator cit = clients.begin(); cit != clients.end(); cit++)
+    for (std::vector<const Client*>::iterator it = clients.begin(); it != clients.end(); it++)
     {
-        if (cit->second.nickname == nickname)
+        if ((*it)->getNickname() == nickname)
             throw NicknameInUse(nickname);
     }
-    server->getClient(client_socket)->nickname = nickname;
-    if (!server->getClient(client_socket)->username.empty())
+    
+    server->getClient(client_socket)->setNickname(nickname);
+    if (!server->getClient(client_socket)->getUsername().empty())
     {
         response = ":server 001 " + nickname + " :Welcome to the IRC Server\r\n";
         send(client_socket, response.c_str(), response.size(), 0);
@@ -67,7 +68,7 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 
 void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 {
-    if (server->isRegistered(client_socket))
+    if (server->getClient(client_socket)->isRegistered())
         throw AlreadyRegisteredException();
 
     std::vector<std::string>    tokens;
@@ -97,12 +98,12 @@ void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
     std::string servername = (tokens.size() > 1 ? tokens[2] : "*");
     std::string realname = tokens[3];
 
-    Client* client = server->getClient(client_socket);
-    client->username = username;
-    client->realname = realname;
-    if (!client->nickname.empty())
+    Client& client = *server->getClient(client_socket);
+    client.setUsername(username);
+    client.setRealname(realname);
+    if (!client.getNickname().empty())
     {
-        response = ":server 001 " + client->nickname + " :Welcome to the IRC Server\r\n";
+        response = ":server 001 " + client.getNickname() + " :Welcome to the IRC Server\r\n";
         send(client_socket, response.c_str(), response.size(), 0);
     }
 }
@@ -116,16 +117,16 @@ void    CommandHandler::cmdPing( int client_socket, const std::string& param )
 void    CommandHandler::cmdPass( int client_socket, const std::string& password )
 {
     std::string response;
-    Client*     client = server->getClient(client_socket);
+    Client&     client = *server->getClient(client_socket);
 
-    if (client->authenticated == true)
+    if (client.isAuthenticated() == true)
         throw AlreadyRegisteredException();
     if (password == "")
         throw NeedMoreParamsException("PASS");
     if (password != server->getPassword())
         throw PasswordMismatchException();
 
-    client->authenticated = true;
+    client.setAuthenticated();
     response = ":server NOTICE * :Password accepted\r\n";
     send(client_socket, response.c_str(), response.size(), 0);
 }

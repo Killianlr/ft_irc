@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/04 16:22:43 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/05 15:38:34 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,7 @@ void	IRCServer::handleNewConnection()
 	t_pollfd	new_poll_fd = {new_socket, POLLIN, 0};
 	poll_fds.push_back(new_poll_fd);
 
-	Client	newClient = { new_socket, "", "", "", false };
-	clients[new_socket] = newClient;
+	clients[new_socket] = new Client(new_socket);
 	std::cout << "New client connected: " << new_socket << std::endl;
 }
 
@@ -105,6 +104,7 @@ void	IRCServer::handleClientData( int client_socket )
 	if (valread <= 0)
 	{
 		close(client_socket);
+		delete clients[client_socket];
 		clients.erase(client_socket);
 		clientBuffers.erase(client_socket);
 		for (std::vector<t_pollfd>::iterator it = poll_fds.begin(); it != poll_fds.end(); it++)
@@ -132,27 +132,21 @@ void	IRCServer::handleClientData( int client_socket )
 
 Client*	IRCServer::getClient( int socket )
 {
-	std::map<int, Client>::iterator it = clients.find(socket);
+	std::map<int, Client*>::iterator it = clients.find(socket);
 	if (it != clients.end())
-		return &(it->second);
+		return (it->second);
 	return (0);
 }
 
-const std::map<int, Client>	IRCServer::getMapClient()
+std::vector<const Client*>	IRCServer::getListClients() const
 {
-	return (clients);
+	std::vector<const Client*>	list;
+	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); it++)
+		list.push_back(it->second);
+	return (list);
 }
 
 const std::string&	IRCServer::getPassword() const
 {
 	return (this->password);
-}
-
-bool	IRCServer::isRegistered( int socket )
-{
-	Client* client = getClient(socket);
-
-	if (client->nickname != "" && client->username != "" && client->authenticated == true)
-		return (true);
-	return (false);
 }

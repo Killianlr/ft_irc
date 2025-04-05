@@ -23,6 +23,7 @@ INCS = -I$(INC_PATH)
 SRCS_FILES =	main.cpp \
 				IRCServer.cpp \
 				CommandHandler.cpp \
+				Client.cpp \
 				
 
 ################################################################################
