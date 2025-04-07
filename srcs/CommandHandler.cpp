@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/05 15:43:10 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/07 09:16:52 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,8 +110,13 @@ void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 
 void    CommandHandler::cmdPing( int client_socket, const std::string& param )
 {
-    std::string response = "PONG " + param + "\r\n";
-    write(client_socket, response.c_str(), response.size());
+    if (param.empty())
+        throw NeedMoreParamsException("PING");
+
+    std::string response;
+    
+    response = "PONG " + server->getServerName() + " " + param + "\r\n";
+    send(client_socket, response.c_str(), response.size(), 0);
 }
 
 void    CommandHandler::cmdPass( int client_socket, const std::string& password )

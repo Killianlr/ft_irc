@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/05 15:38:34 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/07 09:13:48 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,4 +149,9 @@ std::vector<const Client*>	IRCServer::getListClients() const
 const std::string&	IRCServer::getPassword() const
 {
 	return (this->password);
+}
+
+const std::string&	IRCServer::getServerName() const
+{
+	return (this->serverName);
 }

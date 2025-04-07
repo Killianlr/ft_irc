@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/05 15:36:51 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/07 09:13:25 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class IRCServer
 		int						server_fd;
 		std::vector<t_pollfd>	poll_fds;
 		std::map<int, Client*>	clients;
+		std::string				serverName;
 
 		IRCServer&	operator=( const IRCServer& );
 		IRCServer( IRCServer& );
@@ -54,10 +55,11 @@ class IRCServer
 		IRCServer( int, const std::string& );
 		~IRCServer();
 
-		void							start();
-		Client*							getClient( int );
-		std::vector<const Client*>		getListClients() const;
-		const std::string&				getPassword() const;
+		void						start();
+		Client*						getClient( int );
+		std::vector<const Client*>	getListClients() const;
+		const std::string&			getPassword() const;
+		const std::string&			getServerName() const;
 };
 
 #endif
