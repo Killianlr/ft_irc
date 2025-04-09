@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/09 17:05:44 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/09 17:09:55 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ class IRCServer
 		std::vector<const Client*>	getListClients() const;
 		const std::string&			getPassword() const;
 		const std::string&			getServerName() const;
-		const std::string&			getPassword() const;
 		Channel*					getChannel( std::string );
 		
 		void						start();
