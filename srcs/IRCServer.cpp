@@ -6,12 +6,13 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/09 17:07:32 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/09 17:45:29 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "IRCServer.hpp"
 #include "IRCException.hpp"
+#include "Channel.hpp"
 
 IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) {}
 
@@ -117,9 +118,9 @@ void	IRCServer::handleClientData( int client_socket )
 	}
 }
 
-Client*	IRCServer::getClient( int socket )
+Client*	IRCServer::getClient( int socket ) const
 {
-	std::map<int, Client*>::iterator it = clients.find(socket);
+	std::map<int, Client*>::const_iterator it = clients.find(socket);
 	if (it != clients.end())
 		return (it->second);
 	return (0);
@@ -172,4 +173,29 @@ void	IRCServer::closeClientConnection( int client_socket )
 	}
 	std::cout << "Client disconnected: " << client_socket << std::endl;
 	return ;
+}
+
+bool	IRCServer::isClientInChannel( int client_socket, const std::string& channel_name ) const
+{
+	std::map<std::string, Channel*>::const_iterator it = channels.find(channel_name);
+
+	if (it == channels.end())
+		return (false);
+	
+	Channel*	channel = it->second;
+	Client*		client = getClient(client_socket);
+
+	if (!client)
+		return (false);
+	return (channel->hasClient(client));
+}
+
+std::vector<Client*>	IRCServer::getClientsInChannel( const std::string& channel_name ) const
+{
+	std::vector<Client*>	empty;
+	std::map<std::string, Channel*>::const_iterator it = channels.find(channel_name);
+
+	if (it == channels.end())
+		return (empty);
+	return (it->second->getClients());
 }

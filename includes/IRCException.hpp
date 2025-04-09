@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/04 15:58:31 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/09 17:38:49 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,12 @@ class InvalidChannelNameException : public IRCException
 {
     public:
         InvalidChannelNameException() : IRCException("Error: Invalid channel name\r\n") {}
+};
+
+class NotOnChannelException : public IRCException
+{
+    public:
+        NotOnChannelException( const std::string& channel ) : IRCException(":server 442 " + channel + " :You're not on that channel\r\n") {} 
 };
 
 #endif

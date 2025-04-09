@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/09 17:09:55 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/09 17:43:33 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@ class Channel;
 class IRCServer
 {
 	private:
-		int						port;
-		std::string				password;
-		int						server_fd;
-		std::vector<t_pollfd>	poll_fds;
-		std::map<int, Client*>	clients;
-		std::string				serverName;
+		int								port;
+		std::string						password;
+		int								server_fd;
+		std::vector<t_pollfd>			poll_fds;
+		std::map<int, Client*>			clients;
+		std::string						serverName;
 		std::map<std::string, Channel*> channels;
 
 		IRCServer&	operator=( const IRCServer& );
@@ -59,7 +59,7 @@ class IRCServer
 		IRCServer( int, const std::string& );
 		~IRCServer();
 
-		Client*						getClient( int );
+		Client*						getClient( int ) const;
 		std::vector<const Client*>	getListClients() const;
 		const std::string&			getPassword() const;
 		const std::string&			getServerName() const;
@@ -68,6 +68,8 @@ class IRCServer
 		void						start();
 		void						closeClientConnection( int );
 		void						addChannel(std::string channel_name, Channel* newChannel);
+		bool						isClientInChannel( int, const std::string& ) const;
+		std::vector<Client*>		getClientsInChannel( const std::string& ) const;
 };
 
 #endif
