@@ -49,4 +49,10 @@ class NicknameInUse : public IRCException
         NicknameInUse( const std::string& nickname ) : IRCException(":server 433 * " + nickname + " :Nickname is already in use") {}
 };
 
+class InvalidChannelNameException : public IRCException
+{
+    public:
+        InvalidChannelNameException() : IRCException("Error: Invalid channel name\r\n") {}
+};
+
 #endif

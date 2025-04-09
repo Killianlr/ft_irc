@@ -12,12 +12,13 @@
 
 #include "CommandHandler.hpp"
 #include "IRCException.hpp"
+#include "Channel.hpp"
 
 CommandHandler::CommandHandler( IRCServer* server ) : server(server)
 {
     commands["NICK"] = &CommandHandler::cmdNick;
 	commands["USER"] = &CommandHandler::cmdUser;
-	// commands["JOIN"] = &CommandHandler::cmdJoin;
+	commands["JOIN"] = &CommandHandler::cmdJoin;
 	// commands["PRIVMSG"] = &CommandHandler::cmdPrivmsg;
 	commands["PING"] = &CommandHandler::cmdPing;
     commands["PASS"] = &CommandHandler::cmdPass;
@@ -139,5 +140,27 @@ void    CommandHandler::cmdPass( int client_socket, const std::string& password 
 
     client.setAuthenticated();
     response = ":server NOTICE * :Password accepted\r\n";
+    send(client_socket, response.c_str(), response.size(), 0);
+}
+
+void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
+{
+    std::string response;
+    std::string channel_name = param;
+    Client* client = server->getClient(client_socket);
+    Channel* channel;
+
+    if (param.empty() || param[0] != '#')
+        throw InvalidChannelNameException();
+    if (server->getChannel(channel_name))
+        channel = server->getChannel(channel_name);
+    else
+    {
+        channel = new Channel(channel_name);
+        server->addChannel(channel_name, channel);
+    }
+    channel->addClient(client);
+
+    response = ":" + client->getNickname() + " JOIN " + channel_name + "\r\n";
     send(client_socket, response.c_str(), response.size(), 0);
 }

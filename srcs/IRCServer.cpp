@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/09 11:17:43 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/09 17:07:32 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,19 @@ std::vector<const Client*>	IRCServer::getListClients() const
 const std::string&	IRCServer::getPassword() const
 {
 	return (this->password);
+}
+
+Channel* IRCServer::getChannel( std::string channel_name )
+{
+	std::map<std::string, Channel*>::iterator it = channels.find(channel_name);
+	if (it != channels.end())
+		return (it->second);
+	return (0);
+}
+
+void	IRCServer::addChannel(std::string channel_name, Channel* newChannel)
+{
+	channels[channel_name] = newChannel;
 }
 
 const std::string&	IRCServer::getServerName() const
