@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/07 09:13:48 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/09 11:17:43 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,26 +96,13 @@ void	IRCServer::handleNewConnection()
 
 void	IRCServer::handleClientData( int client_socket )
 {
-	static std::map<int, std::string>	clientBuffers;
 	char			buffer[1024];
 	int				valread = read(client_socket, buffer, 1024);
 	CommandHandler	handler(this);
 
 	if (valread <= 0)
 	{
-		close(client_socket);
-		delete clients[client_socket];
-		clients.erase(client_socket);
-		clientBuffers.erase(client_socket);
-		for (std::vector<t_pollfd>::iterator it = poll_fds.begin(); it != poll_fds.end(); it++)
-		{
-			if (it->fd == client_socket)
-			{
-				poll_fds.erase(it);
-				break ;
-			}
-		}
-		std::cout << "Client disconnected: " << client_socket << std::endl;
+		closeClientConnection(client_socket);
 		return ;
 	}
 	clientBuffers[client_socket].append(buffer, valread);
@@ -154,4 +141,22 @@ const std::string&	IRCServer::getPassword() const
 const std::string&	IRCServer::getServerName() const
 {
 	return (this->serverName);
+}
+
+void	IRCServer::closeClientConnection( int client_socket )
+{
+	close(client_socket);
+	delete clients[client_socket];
+	clientBuffers.erase(client_socket);
+	clients.erase(client_socket);
+	for (std::vector<t_pollfd>::iterator it = poll_fds.begin(); it != poll_fds.end(); it++)
+	{
+		if (it->fd == client_socket)
+		{
+			poll_fds.erase(it);
+			break ;
+		}
+	}
+	std::cout << "Client disconnected: " << client_socket << std::endl;
+	return ;
 }

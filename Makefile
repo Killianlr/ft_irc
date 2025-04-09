@@ -5,7 +5,7 @@
 NAME = ircserv
 CC = c++
 
-CFLAGS = -Werror -Wall -Wextra -std=c++98
+CFLAGS = -Werror -Wall -Wextra -std=c++98 -g3
 
 SRCS_PATH = srcs/
 INC_PATH = includes/

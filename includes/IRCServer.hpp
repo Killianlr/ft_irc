@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/07 09:13:25 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/09 11:17:23 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ class IRCServer
 		void	handleClientData( int );
 	
 	public:
+		std::map<int, std::string>	clientBuffers;
+
 		IRCServer( int, const std::string& );
 		~IRCServer();
 
@@ -60,6 +62,7 @@ class IRCServer
 		std::vector<const Client*>	getListClients() const;
 		const std::string&			getPassword() const;
 		const std::string&			getServerName() const;
+		void						closeClientConnection( int );
 };
 
 #endif

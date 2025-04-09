@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/07 09:16:52 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/09 10:54:11 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,15 @@ void	CommandHandler::handleCommand( int client_socket, const std::string& messag
     {
         std::string errorMsg = e.what();
         send(client_socket, errorMsg.c_str(), errorMsg.size(), 0);
+        server->closeClientConnection(client_socket);
     }
 }
 
 void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 {
+    if (!server->getClient(client_socket)->isAuthenticated())
+        throw PasswordMismatchException();
+
     std::vector<const Client*>  clients = server->getListClients();
     std::string                 response;
 
@@ -68,6 +72,8 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 
 void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 {
+    if (!server->getClient(client_socket)->isAuthenticated())
+        throw PasswordMismatchException();
     if (server->getClient(client_socket)->isRegistered())
         throw AlreadyRegisteredException();
 
