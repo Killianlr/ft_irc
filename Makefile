@@ -23,6 +23,7 @@ INCS = -I$(INC_PATH)
 
 SRCS_FILES =	main.cpp \
 				IRCServer.cpp \
+				IRCException.cpp \
 				CommandHandler.cpp \
 				Client.cpp \
 				Channel.cpp \
