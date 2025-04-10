@@ -13,7 +13,10 @@
 #include "IRCServer.hpp"
 #include "IRCException.hpp"
 
-IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) {}
+IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) 
+{
+	channels["#general"] = new Channel("#general");
+}
 
 IRCServer::~IRCServer() {}
 
@@ -92,6 +95,8 @@ void	IRCServer::handleNewConnection()
 
 	clients[new_socket] = new Client(new_socket);
 	std::cout << "New client connected: " << new_socket << std::endl;
+	channels["#general"]->addClient(clients[new_socket]); // ajout du nouveau client dans le channel #general
+	
 }
 
 void	IRCServer::handleClientData( int client_socket )
@@ -136,6 +141,16 @@ Client*	IRCServer::getClient( int socket )
 	if (it != clients.end())
 		return (it->second);
 	return (0);
+}
+
+Client*	IRCServer::getClientByNickName(std::string nick_name)
+{
+	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		if (it->second->getNickname() == nick_name)
+			return it->second;
+	}
+	return 0;
 }
 
 std::vector<const Client*>	IRCServer::getListClients() const

@@ -15,6 +15,8 @@
 
 #include "IRCServer.hpp"
 
+class Channel;
+
 class Client
 {
 	private:
@@ -24,6 +26,9 @@ class Client
 		std::string realname;
 		bool		authenticated;
 		bool		registered;
+		bool		operators;
+
+		Channel*	currentChannel;
 
 		Client();
 		
@@ -39,12 +44,16 @@ class Client
 		const std::string&	getRealname() const;
 		bool				isAuthenticated();
 		bool				isRegistered();
+		bool				isOperators();
+		Channel*			getCurrentChannel() const;
 		
 		void				setNickname( const std::string& );
 		void				setUsername( const std::string& );
 		void				setRealname( const std::string& );
 		void				setAuthenticated();
 		void				setRegistered();
+		void				setOperators();
+		void				setCurrentChannel(Channel* Channel);
 };
 
 #endif

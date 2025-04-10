@@ -26,6 +26,7 @@
 # include <cstdlib>
 # include "CommandHandler.hpp"
 # include "Client.hpp"
+# include "Channel.hpp"
 
 typedef struct pollfd t_pollfd;
 
@@ -37,11 +38,11 @@ class Channel;
 class IRCServer
 {
 	private:
-		int						port;
-		std::string				password;
-		int						server_fd;
-		std::vector<t_pollfd>	poll_fds;
-		std::map<int, Client*>	clients;
+		int								port;
+		std::string						password;
+		int								server_fd;
+		std::vector<t_pollfd>			poll_fds;
+		std::map<int, Client*>			clients;
 		std::map<std::string, Channel*> channels;
 
 		IRCServer&	operator=( const IRCServer& );
@@ -58,6 +59,7 @@ class IRCServer
 
 		void							start();
 		Client*							getClient( int );
+		Client*							getClientByNickName( std::string );
 		std::vector<const Client*>		getListClients() const;
 		const std::string&				getPassword() const;
 		Channel*						getChannel( std::string );

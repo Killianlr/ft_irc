@@ -22,6 +22,11 @@ CommandHandler::CommandHandler( IRCServer* server ) : server(server)
 	// commands["PRIVMSG"] = &CommandHandler::cmdPrivmsg;
 	commands["PING"] = &CommandHandler::cmdPing;
     commands["PASS"] = &CommandHandler::cmdPass;
+
+    commands["INVITE"] = &CommandHandler::cmdInvite;
+    commands["KICK"] = &CommandHandler::cmdKick;
+
+    commands["WHO"] = &CommandHandler::cmdIgnored;
 }
 
 void	CommandHandler::handleCommand( int client_socket, const std::string& message )
@@ -142,14 +147,99 @@ void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
     if (param.empty() || param[0] != '#')
         throw InvalidChannelNameException();
     if (server->getChannel(channel_name))
+    {
+        std::cout << "Channel : " << channel_name << " already exist" << std::endl;
         channel = server->getChannel(channel_name);
+    }
     else
     {
+        std::cout << "Channel : " << channel_name << " be created" << std::endl;
         channel = new Channel(channel_name);
         server->addChannel(channel_name, channel);
+        client->setOperators();
     }
     channel->addClient(client);
 
     response = ":" + client->getNickname() + " JOIN " + channel_name + "\r\n";
     send(client_socket, response.c_str(), response.size(), 0);
+}
+
+/*########################################################################################
+#                                    CHANNEL COMMAND                                     #
+########################################################################################*/
+
+void    CommandHandler::cmdKick(int client_socket, const std::string& param)
+{
+    std::istringstream  iss(param);
+    std::string         channel_name, target_nick, reason;
+    Channel*            channel;
+    Client*             kicker;
+    Client*             target;
+    std::string         msg;
+
+    iss >> channel_name >> target_nick >> reason;
+    if (reason.empty())
+        reason = "no particular reason";
+
+    if (channel_name.empty() || target_nick.empty())
+        throw IRCException("Error: Kick syntax invalid\r\n");
+    
+    channel = server->getChannel(channel_name);
+    if (!channel)
+        throw IRCException("Error: Channel not found\r\n");
+    
+    kicker = server->getClient(client_socket);
+    if (!channel->hasClient(kicker) || !channel->isOperator(kicker))
+        throw IRCException("Error: You are not channel operator\r\n");
+    
+    target = server->getClientByNickName(target_nick);
+    if (!target || !channel->hasClient(target))
+        throw IRCException("Error: User not in channel\r\n");
+
+    channel->removeClient(target);
+
+    msg = ":" + kicker->getNickname() +
+                " KICK " + channel_name + " " + target_nick +
+                " :" + reason + "\r\n";
+    
+    const std::vector<Client*>& channel_members = channel->getMembers();
+    for (size_t i = 0; i < channel_members.size(); ++i)
+        send(channel_members[i]->getSocket(), msg.c_str(), msg.size(), 0);
+}
+
+void    CommandHandler::cmdInvite(int client_socket, const std::string& param)
+{
+    std::istringstream  iss(param);
+    std::string         target_nick, channel_name;
+    Client*             inviter;
+    Client*             target;
+    Channel*            channel;
+    std::string         msg;
+
+    iss >> target_nick >> channel_name;
+    if (target_nick.empty() || channel_name.empty())
+        throw IRCException("Error: INVITE syntax invalid\r\n");
+    
+    inviter = server->getClient(client_socket);
+    target  = server->getClientByNickName(target_nick);
+    if (!target)
+        throw IRCException("Error: User not found\r\n");
+    
+    channel = server->getChannel(channel_name);
+    if (!channel)
+        throw IRCException("Error: Channel not found\r\n");
+    if (!channel->hasClient(inviter) || !channel->isOperator(inviter))
+        throw IRCException("Error: You're not operator of the channel\r\n");
+
+    channel->addInvite(target);
+    
+    msg = ":" + inviter->getNickname() + " INVITE " + target_nick + " :" + channel_name + "\r\n";
+    send(target->getSocket(), msg.c_str(), msg.size(), 0);
+}
+
+void    CommandHandler::cmdIgnored( int client_socket, const std::string& param)
+{
+    (void)client_socket;
+    (void)param;
+    std::cout << ": [Command ignored]" << std::endl;
 }
