@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCException.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/10 11:30:13 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/11 10:18:03 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,46 +19,49 @@
 class IRCException : public std::runtime_error
 {
     public:
-        IRCException( int, const std::string& );
+        IRCException( const std::string& );
 };
 
 // ERR_ALREADYREGISTERED (462)
 class AlreadyRegisteredException : public IRCException
 {
     public:
-        AlreadyRegisteredException( int );
+        AlreadyRegisteredException();
 };
 
 // ERR_NEEDMOREPARAMS (461)
 class NeedMoreParamsException : public IRCException
 {
     public:
-        NeedMoreParamsException( int, const std::string& );
+        NeedMoreParamsException( const std::string& );
 };
 
 // ERR_PASSWDMISMATCH (464)
 class PasswordMismatchException : public IRCException
 {
     public:
-        PasswordMismatchException( int );
+        PasswordMismatchException();
 };
 
+// ERR_NICKNAMEINUSE (433)
 class NicknameInUse : public IRCException
 {
     public:
-        NicknameInUse( int, const std::string& );
+        NicknameInUse( const std::string& );
 };
 
+// ERR_NOSUCHCHANNEL (403)
 class InvalidChannelNameException : public IRCException
 {
     public:
-        InvalidChannelNameException( int );
+        InvalidChannelNameException();
 };
 
+// ERR_NOTONCHANNEL (442)
 class NotOnChannelException : public IRCException
 {
     public:
-        NotOnChannelException( int, const std::string& );
+        NotOnChannelException( const std::string& );
 };
 
 #endif
