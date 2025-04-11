@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/09 17:38:49 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/10 11:30:13 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,46 +19,46 @@
 class IRCException : public std::runtime_error
 {
     public:
-        IRCException( const std::string& message ) : std::runtime_error(message) {}
+        IRCException( int, const std::string& );
 };
 
 // ERR_ALREADYREGISTERED (462)
 class AlreadyRegisteredException : public IRCException
 {
     public:
-        AlreadyRegisteredException() : IRCException(":server 462 * :You may not reregister\n\r") {}
+        AlreadyRegisteredException( int );
 };
 
 // ERR_NEEDMOREPARAMS (461)
 class NeedMoreParamsException : public IRCException
 {
     public:
-        NeedMoreParamsException( const std::string& command ) : IRCException(":server 461 * " + command + " :Not enough parameters\r\n") {}
+        NeedMoreParamsException( int, const std::string& );
 };
 
 // ERR_PASSWDMISMATCH (464)
 class PasswordMismatchException : public IRCException
 {
     public:
-        PasswordMismatchException() : IRCException(":server 464 * :Bad password\r\n") {}
+        PasswordMismatchException( int );
 };
 
 class NicknameInUse : public IRCException
 {
     public:
-        NicknameInUse( const std::string& nickname ) : IRCException(":server 433 * " + nickname + " :Nickname is already in use") {}
+        NicknameInUse( int, const std::string& );
 };
 
 class InvalidChannelNameException : public IRCException
 {
     public:
-        InvalidChannelNameException() : IRCException("Error: Invalid channel name\r\n") {}
+        InvalidChannelNameException( int );
 };
 
 class NotOnChannelException : public IRCException
 {
     public:
-        NotOnChannelException( const std::string& channel ) : IRCException(":server 442 " + channel + " :You're not on that channel\r\n") {} 
+        NotOnChannelException( int, const std::string& );
 };
 
 #endif
