@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandHandler.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: robincanavaggio <robincanavaggio@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/09 17:52:30 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/10 19:20:00 by robincanava      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,8 +176,8 @@ void    CommandHandler::cmdPrivmsg( int client_socket, const std::string& param 
 	std::getline(iss >> std::ws, message);
 	if (target[0] == '#' || target[0] == '&')
 		handleChannelMessage(client_socket, target, message);
-	// else
-	// 	handlePrivateMessage(client_socket, target, message);
+	else
+		handlePrivateMessage(client_socket, target, message);
 }
 
 void    CommandHandler::handleChannelMessage( int client_socket, const std::string& channel, const std::string& message )
@@ -194,4 +194,19 @@ void    CommandHandler::handleChannelMessage( int client_socket, const std::stri
 		if ((*it)->getSocket() != client_socket)
 			send((*it)->getSocket(), response.c_str(), response.size(), 0);
 	}
+}
+
+void	CommandHandler::handlePrivateMessage( int client_socket, const std::string& target, const std::string& message )
+{
+	if (!server->getClientByNickname(target))
+	{
+		std::string response = ":server 401 * " + target + " :No such nick/channel\r\n";
+		send(client_socket, response.c_str(), response.size(), 0);
+		return ;
+	}
+
+	Client*	sender = server->getClient(client_socket);
+	Client*	receiver = server->getClientByNickname(target);
+	std::string	response = ":" + sender->getNickname() + " PRIVMSG " + target + " :" + message + "\r\n";
+	send(receiver->getSocket(), response.c_str(), response.size(), 0);
 }

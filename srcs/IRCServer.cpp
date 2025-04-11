@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: robincanavaggio <robincanavaggio@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/09 17:45:29 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/10 19:13:06 by robincanava      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,16 @@ Client*	IRCServer::getClient( int socket ) const
 	std::map<int, Client*>::const_iterator it = clients.find(socket);
 	if (it != clients.end())
 		return (it->second);
+	return (0);
+}
+
+Client*	IRCServer::getClientByNickname( const std::string& nickname ) const
+{
+	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); it++)
+	{
+		if (it->second->getNickname() == nickname)
+			return (it->second);
+	}
 	return (0);
 }
 

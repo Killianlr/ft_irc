@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: robincanavaggio <robincanavaggio@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/09 17:43:33 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/10 19:12:08 by robincanava      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ class IRCServer
 		~IRCServer();
 
 		Client*						getClient( int ) const;
+		Client*						getClientByNickname( const std::string& ) const;
 		std::vector<const Client*>	getListClients() const;
 		const std::string&			getPassword() const;
 		const std::string&			getServerName() const;
