@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/11 09:05:22 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/11 11:15:29 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,15 @@ void	CommandHandler::handleCommand( int client_socket, const std::string& messag
 		std::string errorMsg = e.what();
 		std::cout << errorMsg << std::endl;
 		send(client_socket, errorMsg.c_str(), errorMsg.size(), 0);
-		// server->closeClientConnection(client_socket);
+		if (!server->getClient(client_socket)->isRegistered())
+			server->closeClientConnection(client_socket);
 	}
 }
-#include <stdio.h>
+
 void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 {
 	if (!server->getClient(client_socket)->isAuthenticated())
-		throw PasswordMismatchException(client_socket);
+		throw PasswordMismatchException();
 
 	std::vector<const Client*>  clients = server->getListClients();
 	std::string                 response;
@@ -61,7 +62,7 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 	for (std::vector<const Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 	{
 		if ((*it)->getNickname() == nickname)
-			throw NicknameInUse(client_socket, nickname);
+			throw NicknameInUse(nickname);
 	}
 	
 	server->getClient(client_socket)->setNickname(nickname);
@@ -76,9 +77,9 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 {
 	if (!server->getClient(client_socket)->isAuthenticated())
-		throw PasswordMismatchException(client_socket);
+		throw PasswordMismatchException();
 	if (server->getClient(client_socket)->isRegistered())
-		throw AlreadyRegisteredException(client_socket);
+		throw AlreadyRegisteredException();
 
 	std::vector<std::string>    tokens;
 	std::string                 response, token;
@@ -100,7 +101,7 @@ void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 		tokens.push_back(userInfo.substr(start));
 	
 	if (tokens.size() < 4)
-		throw NeedMoreParamsException(client_socket, "USER");
+		throw NeedMoreParamsException("USER");
 
 	std::string username = tokens[0];
 	std::string hostname = (tokens.size() > 1 ? tokens[1] : "0");
@@ -120,7 +121,7 @@ void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 void    CommandHandler::cmdPing( int client_socket, const std::string& param )
 {
 	if (param.empty())
-		throw NeedMoreParamsException(client_socket, "PING");
+		throw NeedMoreParamsException("PING");
 
 	std::string response;
 	
@@ -134,11 +135,11 @@ void    CommandHandler::cmdPass( int client_socket, const std::string& password 
 	Client&     client = *server->getClient(client_socket);
 
 	if (client.isAuthenticated() == true)
-		throw AlreadyRegisteredException(client_socket);
+		throw AlreadyRegisteredException();
 	if (password == "")
-		throw NeedMoreParamsException(client_socket, "PASS");
+		throw NeedMoreParamsException("PASS");
 	if (password != server->getPassword())
-		throw PasswordMismatchException(client_socket);
+		throw PasswordMismatchException();
 
 	client.setAuthenticated();
 	response = ":server NOTICE * :Password accepted\r\n";
@@ -153,7 +154,7 @@ void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
 	Channel* channel;
 
 	if (param.empty() || param[0] != '#')
-		throw InvalidChannelNameException(client_socket);
+		throw InvalidChannelNameException();
 	if (server->getChannel(channel_name))
 		channel = server->getChannel(channel_name);
 	else
@@ -173,7 +174,7 @@ void    CommandHandler::cmdPrivmsg( int client_socket, const std::string& param 
 	std::string         target, message, response;
 
 	if (!(iss >> target))
-		throw NeedMoreParamsException(client_socket, "PRIVMSG");
+		throw NeedMoreParamsException("PRIVMSG");
 	
 	std::getline(iss >> std::ws, message);
 	if (target[0] == '#' || target[0] == '&')
@@ -185,7 +186,7 @@ void    CommandHandler::cmdPrivmsg( int client_socket, const std::string& param 
 void    CommandHandler::handleChannelMessage( int client_socket, const std::string& channel, const std::string& message )
 {
 	if (!server->isClientInChannel(client_socket, channel))
-		throw NotOnChannelException(client_socket, channel);
+		throw NotOnChannelException(channel);
 
 	Client*					sender = server->getClient(client_socket);
 	std::vector<Client*>	clients = server->getClientsInChannel(channel);
