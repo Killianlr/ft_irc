@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandHandler.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/11 11:15:29 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/15 11:12:24 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,10 +148,10 @@ void    CommandHandler::cmdPass( int client_socket, const std::string& password 
 
 void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
 {
-	std::string response;
-	std::string channel_name = param;
-	Client* client = server->getClient(client_socket);
-	Channel* channel;
+	std::string	response;
+	std::string	channel_name = param;
+	Client*		client = server->getClient(client_socket);
+	Channel*	channel;
 
 	if (param.empty() || param[0] != '#')
 		throw InvalidChannelNameException();
@@ -163,9 +163,14 @@ void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
 		server->addChannel(channel_name, channel);
 	}
 	channel->addClient(client);
-
 	response = ":" + client->getNickname() + " JOIN " + channel_name + "\r\n";
-	send(client_socket, response.c_str(), response.size(), 0);
+
+	std::vector<Client*>	channelClients = server->getClientsInChannel(channel_name);
+	if (!channelClients.empty())
+	{
+		for (std::vector<Client*>::iterator it = channelClients.begin(); it != channelClients.end(); it++)
+			send((*it)->getSocket(), response.c_str(), response.size(), 0);
+	}
 }
 
 void    CommandHandler::cmdPrivmsg( int client_socket, const std::string& param )
