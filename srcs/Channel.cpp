@@ -44,7 +44,7 @@ void	Channel::removeClient(Client* client)
 	_operators.erase(client->getSocket());
 }
 
-bool	Channel::hasClient(Client* client) const
+bool	Channel::hasClient(const Client* client) const
 {
 	for (size_t i = 0; i < _members.size(); ++i)
 	{

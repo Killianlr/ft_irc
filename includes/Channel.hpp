@@ -26,30 +26,29 @@ class Channel
 		Channel(const std::string& name);
 		~Channel();
 
+		
+		const std::string				&getKey() const;
+		const std::string 				&getName() const;
+		const std::vector<Client *>		&getMembers() const;
+		int								getUserLimit() const;
+		int								getNbMembers() const;
+		std::vector<Client*>			getClients() const;
+
 		void	addClient(Client* client);
 		void	addInvite(Client* client);
-		void	setOperator(Client* client, bool status);
 		void	removeClient(Client* client);
+
+		void	setOperator(Client* client, bool status);
 		void	setInviteOnly(bool value);
 		void	setTopicRestricted(bool value);
 		void	setKey(const std::string k);
 		void	setUserLimit(int limit);
 		
-		bool	hasClient(Client* client) const;
 		bool	isInvite(Client* client) const;
 		bool	isOperator(Client* client) const;
 		bool	isInviteOnly() const;
 		bool	isTopicRestricted() const;
-		int		getUserLimit() const;
-		int		getNbMembers() const;
-		
-		const std::string				&getKey() const;
-		const std::string 				&getName() const;
-		const std::vector<Client *>		&getMembers() const;
-		void					addClient( Client* client );
-		bool					hasClient( const Client* ) const;
-		const std::string		&getName() const;
-		std::vector<Client*>	getClients() const;
+		bool	hasClient( const Client* ) const;
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/15 11:57:43 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/15 12:09:23 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ CommandHandler::CommandHandler( IRCServer* server ) : server(server)
 	commands["PRIVMSG"] = &CommandHandler::cmdPrivmsg;
 	commands["PING"] = &CommandHandler::cmdPing;
     commands["PASS"] = &CommandHandler::cmdPass;
-
     commands["INVITE"] = &CommandHandler::cmdInvite;
     commands["KICK"] = &CommandHandler::cmdKick;
     commands["MODE"] = &CommandHandler::cmdMode;
@@ -130,7 +129,7 @@ void    CommandHandler::cmdPing( int client_socket, const std::string& param )
 
 	std::string response;
 	
-	response = "PONG " + server->getServerName() + " " + param + "\r\n";
+	response = "PONG server " + param + "\r\n";
 	send(client_socket, response.c_str(), response.size(), 0);
 }
 
@@ -213,7 +212,7 @@ void    CommandHandler::cmdKick(int client_socket, const std::string& param)
     if (!channel->hasClient(kicker) || !channel->isOperator(kicker))
         throw IRCException("Error: You are not channel operator\r\n");
     
-    target = server->getClientByNickName(target_nick);
+    target = server->getClientByNickname(target_nick);
     if (!target || !channel->hasClient(target))
         throw IRCException("Error: User not in channel\r\n");
 
@@ -242,7 +241,7 @@ void    CommandHandler::cmdInvite(int client_socket, const std::string& param)
         throw IRCException("Error: INVITE syntax invalid\r\n");
     
     inviter = server->getClient(client_socket);
-    target  = server->getClientByNickName(target_nick);
+    target  = server->getClientByNickname(target_nick);
     if (!target)
         throw IRCException("Error: User not found\r\n");
     
@@ -326,7 +325,7 @@ void    CommandHandler::cmdMode(int client_socket, const std::string &param)
                 std::cout << "Error: MODE +o missing nickname" << std::endl;
                 throw IRCException("Error: MODE +o missing nickname\r\n");
             }
-            target = server->getClientByNickName(params);
+            target = server->getClientByNickname(params);
             if (!target)
             {
                 std::cout << "Error: MODE +o no such nickname" << std::endl;

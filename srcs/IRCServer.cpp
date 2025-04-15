@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/15 11:58:43 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/15 12:07:33 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,11 +167,6 @@ void	IRCServer::addChannel(std::string channel_name, Channel* newChannel)
 	channels[channel_name] = newChannel;
 }
 
-const std::string&	IRCServer::getServerName() const
-{
-	return (this->serverName);
-}
-
 void	IRCServer::closeClientConnection( int client_socket )
 {
 	close(client_socket);
@@ -212,5 +207,5 @@ std::vector<Client*>	IRCServer::getClientsInChannel( const std::string& channel_
 
 	if (it == channels.end())
 		return (empty);
-	return (it->second->getClients());
+	return (it->second->getMembers());
 }
