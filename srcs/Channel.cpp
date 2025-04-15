@@ -1,6 +1,12 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string &name) : _name(name) {}
+Channel::Channel(const std::string &name) : _name(name)
+{
+	_inviteOnly = false;
+	_topicRestricted = false;
+	_key = "";
+	_userLimit = -1;
+}
 
 Channel::~Channel() {}
 
@@ -74,4 +80,49 @@ const std::string &Channel::getName() const
 const std::vector<Client *>	&Channel::getMembers() const
 {
 	return _members;
+}
+
+void	Channel::setInviteOnly(bool value)
+{
+	_inviteOnly = value;
+}
+
+void	Channel::setTopicRestricted(bool value)
+{
+	_topicRestricted = value;
+}
+
+void	Channel::setKey(const std::string k)
+{
+	_key = k;
+}
+
+void	Channel::setUserLimit(int limit)
+{
+	_userLimit = limit;
+}
+
+bool	Channel::isInviteOnly() const
+{
+	return _inviteOnly;
+}
+
+bool	Channel::isTopicRestricted() const
+{
+	return _topicRestricted;
+}
+
+int		Channel::getUserLimit() const
+{
+	return _userLimit;
+}
+
+const	std::string	&Channel::getKey() const
+{
+	return _key;
+}
+
+int		Channel::getNbMembers() const
+{
+	return _members.size();
 }
