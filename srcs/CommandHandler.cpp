@@ -153,22 +153,33 @@ void    CommandHandler::cmdPass( int client_socket, const std::string& password 
 
 void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
 {
+    std::istringstream  iss(param);
     std::string response;
-    std::string channel_name = param;
+    std::string channel_name, key;
+    iss >> channel_name >> key;
     Client* client = server->getClient(client_socket);
     Channel* channel = server->getChannel(channel_name);
 
-    std::cout << "param : " << param << std::endl;
     if (param.empty() || param[0] != '#')
         throw InvalidChannelNameException();
     if (channel)
     {
-        std::cout << "Channel : " << channel_name << " already exist" << std::endl;
+        // std::cout << "Channel : " << channel_name << " already exist" << std::endl;
         // channel = server->getChannel(channel_name);
         // if (channel->getNbMembers() > )
+        if (channel->getKey() != key)
+        {
+            std::cout << "Wrong password\n" << std::endl;
+            return ;
+        }
         if (channel->isInviteOnly() && !channel->isInvite(client))
         {
             std::cout << "You're not invited to this channel\n" << std::endl; // MUST BE A EXCEPTION
+            return ;
+        }
+        if (channel->getUserLimit() > 0 && channel->getNbMembers() >= channel->getUserLimit())
+        {
+            std::cout << "Channel is full\n" << std::endl;
             return ;
         }
     }
@@ -285,6 +296,11 @@ void    CommandHandler::cmdMode(int client_socket, const std::string &param)
         throw IRCException("Error: MODE Channel not found\r\n");
     }
 
+    if (!channel->isOperator(server->getClient(client_socket)))
+    {
+        std::cout << "Error: you arent an operator\n" << std::endl;
+        return ;
+    }
     for (size_t i = 0; i < modes.length(); ++i)
     {
         if (modes[i] == '+') adding = true;
