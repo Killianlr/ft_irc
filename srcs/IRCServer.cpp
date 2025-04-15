@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: robincanavaggio <robincanavaggio@studen    +#+  +:+       +#+        */
+/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/10 19:13:06 by robincanava      ###   ########.fr       */
+/*   Updated: 2025/04/15 11:58:43 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,10 @@
 #include "IRCException.hpp"
 #include "Channel.hpp"
 
-IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) {}
+IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) 
+{
+	channels["#general"] = new Channel("#general");
+}
 
 IRCServer::~IRCServer() {}
 
@@ -93,6 +96,8 @@ void	IRCServer::handleNewConnection()
 
 	clients[new_socket] = new Client(new_socket);
 	std::cout << "New client connected: " << new_socket << std::endl;
+	channels["#general"]->addClient(clients[new_socket]); // ajout du nouveau client dans le channel #general
+	
 }
 
 void	IRCServer::handleClientData( int client_socket )

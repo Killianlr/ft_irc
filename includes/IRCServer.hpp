@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: robincanavaggio <robincanavaggio@studen    +#+  +:+       +#+        */
+/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/10 19:12:08 by robincanava      ###   ########.fr       */
+/*   Updated: 2025/04/15 11:55:52 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <cstdlib>
 # include "CommandHandler.hpp"
 # include "Client.hpp"
+# include "Channel.hpp"
 
 typedef struct pollfd t_pollfd;
 
@@ -42,7 +43,6 @@ class IRCServer
 		int								server_fd;
 		std::vector<t_pollfd>			poll_fds;
 		std::map<int, Client*>			clients;
-		std::string						serverName;
 		std::map<std::string, Channel*> channels;
 
 		IRCServer&	operator=( const IRCServer& );

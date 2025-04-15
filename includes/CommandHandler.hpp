@@ -31,6 +31,12 @@ class CommandHandler
 		void	cmdPrivmsg( int, const std::string& );
 		void	cmdPing( int, const std::string& );
 		void	cmdPass( int, const std::string& );
+
+		void	cmdKick( int, const std::string& );
+		void	cmdInvite( int, const std::string& );
+		void	cmdMode( int, const std::string& );
+
+		void	cmdIgnored( int, const std::string& );
 		
 		void	sendRegistrationMessages( int, const std::string& );
 		void	handleChannelMessage( int, const std::string&, const std::string& );

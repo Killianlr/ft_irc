@@ -12,11 +12,11 @@
 
 #include "Client.hpp"
 
-Client::Client( int socket ) : socket(socket), nickname(""), username(""), realname(""), authenticated(false), registered(false) {}
+Client::Client( int socket ) : socket(socket), nickname(""), username(""), realname(""), authenticated(false), registered(false), operators(false), currentChannel(NULL) {}
 
-Client::Client() : socket(0), nickname(""), username(""), realname(""), authenticated(false), registered(false) {}
+Client::Client() : socket(0), nickname(""), username(""), realname(""), authenticated(false), registered(false), operators(false) {}
 
-Client::Client( const Client& other ) : socket(other.socket), nickname(other.nickname), username(other.username), realname(other.realname), authenticated(other.authenticated), registered(other.registered) {}
+Client::Client( const Client& other ) : socket(other.socket), nickname(other.nickname), username(other.username), realname(other.realname), authenticated(other.authenticated), registered(other.registered), operators(other.operators) {}
 
 Client&	Client::operator=( const Client& other )
 {
@@ -28,6 +28,7 @@ Client&	Client::operator=( const Client& other )
 		this->realname = other.realname;
 		this->authenticated = other.authenticated;
 		this->registered = other.registered;
+		this->operators = other.operators;
 	}
 	return (*this);
 }
@@ -64,6 +65,16 @@ bool	Client::isRegistered()
 	return (this->registered);
 }
 
+bool	Client::isOperators()
+{
+	return (this->operators);
+}
+
+Channel*	Client::getCurrentChannel() const
+{
+	return (this->currentChannel);
+}
+
 void	Client::setNickname( const std::string& str )
 {
 	this->nickname = str;
@@ -89,4 +100,15 @@ void	Client::setRegistered()
 {
 	if (this->registered != true)
 		this->registered = true;
+}
+
+void	Client::setOperators()
+{
+	if (this->operators != true)
+		this->operators = true;
+}
+
+void	Client::setCurrentChannel(Channel* Channel)
+{
+	currentChannel = Channel;
 }
