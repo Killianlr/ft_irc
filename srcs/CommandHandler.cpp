@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/15 12:09:23 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/15 12:39:37 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 	if (!client.getNickname().empty())
 	{
 		response = ":server 001 " + client.getNickname() + " :Welcome to the IRC Server\r\n";
+		client.setRegistered();
 		send(client_socket, response.c_str(), response.size(), 0);
 	}
 }
@@ -238,7 +239,7 @@ void    CommandHandler::cmdInvite(int client_socket, const std::string& param)
 
     iss >> target_nick >> channel_name;
     if (target_nick.empty() || channel_name.empty())
-        throw IRCException("Error: INVITE syntax invalid\r\n");
+        throw NeedMoreParamsException("INVITE");
     
     inviter = server->getClient(client_socket);
     target  = server->getClientByNickname(target_nick);
@@ -247,9 +248,9 @@ void    CommandHandler::cmdInvite(int client_socket, const std::string& param)
     
     channel = server->getChannel(channel_name);
     if (!channel)
-        throw IRCException("Error: Channel not found\r\n");
+        throw InvalidChannelNameException();
     if (!channel->hasClient(inviter) || !channel->isOperator(inviter))
-        throw IRCException("Error: You're not operator of the channel\r\n");
+        throw IRCException(":server 482 " + channel_name + " :Invalid channel name\r\n");
 
     channel->addInvite(target);
     
@@ -354,4 +355,50 @@ void    CommandHandler::cmdIgnored( int client_socket, const std::string& param)
     (void)client_socket;
     (void)param;
     std::cout << ": [Command ignored]" << std::endl;
+}
+
+void    CommandHandler::cmdPrivmsg( int client_socket, const std::string& param )
+{
+	std::istringstream  iss(param);
+	std::string         target, message, response;
+
+	if (!(iss >> target))
+		throw NeedMoreParamsException("PRIVMSG");
+	
+	std::getline(iss >> std::ws, message);
+	if (target[0] == '#' || target[0] == '&')
+		handleChannelMessage(client_socket, target, message);
+	else
+		handlePrivateMessage(client_socket, target, message);
+}
+
+void    CommandHandler::handleChannelMessage( int client_socket, const std::string& channel, const std::string& message )
+{
+	if (!server->isClientInChannel(client_socket, channel))
+		throw NotOnChannelException(channel);
+
+	Client*					sender = server->getClient(client_socket);
+	std::vector<Client*>	clients = server->getClientsInChannel(channel);
+	std::string				response = ":" + sender->getNickname() + " PRIVMSG " + channel + " :" + message + "\r\n";
+
+	for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); it++)
+	{
+		if ((*it)->getSocket() != client_socket)
+			send((*it)->getSocket(), response.c_str(), response.size(), 0);
+	}
+}
+
+void	CommandHandler::handlePrivateMessage( int client_socket, const std::string& target, const std::string& message )
+{
+	if (!server->getClientByNickname(target))
+	{
+		std::string response = ":server 401 * " + target + " :No such nick/channel\r\n";
+		send(client_socket, response.c_str(), response.size(), 0);
+		return ;
+	}
+
+	Client*	sender = server->getClient(client_socket);
+	Client*	receiver = server->getClientByNickname(target);
+	std::string	response = ":" + sender->getNickname() + " PRIVMSG " + target + " :" + message + "\r\n";
+	send(receiver->getSocket(), response.c_str(), response.size(), 0);
 }
