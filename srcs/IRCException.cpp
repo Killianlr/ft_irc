@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCException.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:25:57 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/11 10:19:36 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/15 14:28:31 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ PasswordMismatchException::PasswordMismatchException() : IRCException(":server 4
 
 NicknameInUse::NicknameInUse( const std::string& nickname ) : IRCException(":server 433 * " + nickname + " :Nickname is already in use\r\n") {}
 
-InvalidChannelNameException::InvalidChannelNameException() : IRCException(":server 403 * :Invalid channel name\r\n") {}
+NoSuchChannel::NoSuchChannel() : IRCException(":server 403 * :Invalid channel name\r\n") {}
 
 NotOnChannelException::NotOnChannelException( const std::string& channel ) : IRCException(":server 442 * " + channel + " :You're not on that channel\r\n") {} 
+
+ChanOPrivsNeeded::ChanOPrivsNeeded( const std::string& channel ) : IRCException(":server 482 " + channel + " :You're not channel operator\r\n") {}

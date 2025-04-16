@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/15 12:01:22 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/15 14:15:36 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <netinet/in.h>
 # include <unistd.h>
 # include <cstdlib>
+# include <algorithm>
 # include "CommandHandler.hpp"
 # include "Client.hpp"
 # include "Channel.hpp"

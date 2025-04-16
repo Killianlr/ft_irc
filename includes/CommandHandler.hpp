@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:22:33 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/09 17:17:59 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/15 14:54:46 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "IRCServer.hpp"
 
 class IRCServer;
+class Channel;
 
 class CommandHandler
 {
@@ -31,6 +32,7 @@ class CommandHandler
 		void	cmdPrivmsg( int, const std::string& );
 		void	cmdPing( int, const std::string& );
 		void	cmdPass( int, const std::string& );
+		void	cmdTopic( int, const std::string& );
 
 		void	cmdKick( int, const std::string& );
 		void	cmdInvite( int, const std::string& );
@@ -38,9 +40,9 @@ class CommandHandler
 
 		void	cmdIgnored( int, const std::string& );
 		
-		void	sendRegistrationMessages( int, const std::string& );
 		void	handleChannelMessage( int, const std::string&, const std::string& );
 		void	handlePrivateMessage( int, const std::string&, const std::string& );
+		void	broadcastToChannel( Channel*, const std::string&, int );
 		
 	public:
 		CommandHandler( IRCServer* );

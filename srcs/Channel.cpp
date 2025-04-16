@@ -6,9 +6,27 @@ Channel::Channel(const std::string &name) : _name(name)
 	_topicRestricted = false;
 	_key = "";
 	_userLimit = -1;
+	_topic = "";
 }
 
 Channel::~Channel() {}
+
+Channel&	Channel::operator=( const Channel& other )
+{
+	if (this != &other)
+	{
+		this->_name = other._name;
+		this->_members = other._members;
+		this->_invited = other._invited;
+		this->_operators = other._operators;
+		this->_topic = other._topic;
+		this->_inviteOnly = other._inviteOnly;
+		this->_topicRestricted = other._topicRestricted;
+		this->_key = other._key;
+		this->_userLimit = other._userLimit;
+	}
+	return (*this);
+}
 
 void	Channel::addClient(Client* client)
 {
@@ -125,4 +143,14 @@ const	std::string	&Channel::getKey() const
 int		Channel::getNbMembers() const
 {
 	return _members.size();
+}
+
+const std::string&	Channel::getTopic() const
+{
+	return (this->_topic);
+}
+
+void	Channel::setTopic( const std::string& str )
+{
+	this->_topic = str;
 }

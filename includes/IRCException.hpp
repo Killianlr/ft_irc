@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCException.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/11 10:18:03 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/15 14:30:49 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,10 @@ class NicknameInUse : public IRCException
 };
 
 // ERR_NOSUCHCHANNEL (403)
-class InvalidChannelNameException : public IRCException
+class NoSuchChannel : public IRCException
 {
     public:
-        InvalidChannelNameException();
+        NoSuchChannel();
 };
 
 // ERR_NOTONCHANNEL (442)
@@ -62,6 +62,13 @@ class NotOnChannelException : public IRCException
 {
     public:
         NotOnChannelException( const std::string& );
+};
+
+// ERR_CHANOPRIVSNEEDED (482)
+class ChanOPrivsNeeded : public IRCException
+{
+    public:
+        ChanOPrivsNeeded( const std::string& );
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/15 12:39:37 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/15 17:49:33 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ CommandHandler::CommandHandler( IRCServer* server ) : server(server)
     commands["INVITE"] = &CommandHandler::cmdInvite;
     commands["KICK"] = &CommandHandler::cmdKick;
     commands["MODE"] = &CommandHandler::cmdMode;
-
+	commands["TOPIC"] = &CommandHandler::cmdTopic;
 }
 
 void	CommandHandler::handleCommand( int client_socket, const std::string& message )
@@ -160,7 +160,7 @@ void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
 
     std::cout << "param : " << param << std::endl;
     if (param.empty() || param[0] != '#')
-        throw InvalidChannelNameException();
+        throw NoSuchChannel();
     if (channel)
     {
         std::cout << "Channel : " << channel_name << " already exist" << std::endl;
@@ -248,7 +248,7 @@ void    CommandHandler::cmdInvite(int client_socket, const std::string& param)
     
     channel = server->getChannel(channel_name);
     if (!channel)
-        throw InvalidChannelNameException();
+        throw NoSuchChannel();
     if (!channel->hasClient(inviter) || !channel->isOperator(inviter))
         throw IRCException(":server 482 " + channel_name + " :Invalid channel name\r\n");
 
@@ -397,8 +397,64 @@ void	CommandHandler::handlePrivateMessage( int client_socket, const std::string&
 		return ;
 	}
 
-	Client*	sender = server->getClient(client_socket);
-	Client*	receiver = server->getClientByNickname(target);
+	Client*		sender = server->getClient(client_socket);
+	Client*		receiver = server->getClientByNickname(target);
 	std::string	response = ":" + sender->getNickname() + " PRIVMSG " + target + " :" + message + "\r\n";
+
 	send(receiver->getSocket(), response.c_str(), response.size(), 0);
+}
+
+void	CommandHandler::cmdTopic( int socket, const std::string& param )
+{
+	std::istringstream		iss(param);
+	std::string				target, topic;
+	Channel*				current;
+	Client*					requester = server->getClient(socket);
+
+	if (!(iss >> target))
+		throw NeedMoreParamsException("TOPIC");
+	
+	std::getline(iss >> std::ws, topic);
+	current = server->getChannel(target);
+	if (!current)
+		throw NoSuchChannel();
+	bool isMember = false;
+	const std::vector<Client*>&	members = current->getMembers();
+	for (std::vector<Client*>::const_iterator it = members.begin(); it != members.end(); it++)
+	{
+		if ((*it)->getNickname() == requester->getNickname())
+		{
+			isMember = true;
+			break ;
+		}
+	}
+	if (!isMember)
+		throw NotOnChannelException(target);
+
+	if (topic.empty())
+	{
+		std::string	response;
+		if (current->getTopic().empty())
+			response = ":server 331 " + requester->getNickname() + " " + target + " :No topic is set\r\n";
+		else
+			response = ":server 332 " + requester->getNickname() + " " + target + " :" + current->getTopic() + "\r\n";
+		send(socket, response.c_str(), response.size(), 0);
+		return ;
+	}
+
+	if (current->isTopicRestricted() && !current->isOperator(server->getClient(socket)))
+		throw ChanOPrivsNeeded(target);
+	current->setTopic(topic);
+	std::string	msg = ":" + requester->getNickname() + " TOPIC " + target + " :" + topic + "\r\n";
+	broadcastToChannel(current, msg, -1);
+}
+
+void	CommandHandler::broadcastToChannel( Channel* channel, const std::string& msg, int exclude_socket )
+{
+	const std::vector<Client*>	&members = channel->getMembers();
+	for (std::vector<Client*>::const_iterator it = members.begin(); it != members.end(); it++)
+	{
+		if ((*it)->getSocket() != exclude_socket)
+			send((*it)->getSocket(), msg.c_str(), msg.size(), 0);
+	}
 }
