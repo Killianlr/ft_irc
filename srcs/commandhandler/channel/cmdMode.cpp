@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:06 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 14:59:19 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 16:28:45 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,9 @@ void    CommandHandler::cmdMode(int client_socket, const std::string &param)
                 throw IRCException("Error: MODE +o no such nickname\r\n");
             }
             if (adding)
-                channel->setOperator(target, true);
+                channel->setOperator(target);
             else
-                channel->setOperator(target, false);
+                channel->setOperator(target);
         }
         else
         {

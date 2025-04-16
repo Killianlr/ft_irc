@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 15:04:51 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 16:29:56 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,34 +16,58 @@
 
 void    CommandHandler::cmdJoin( int client_socket, const std::string& param )
 {
-	std::string	response;
-	std::string	channel_name = param;
+	std::string	channelsParam, keysParam, response;
 	Client*		client = server->getClient(client_socket);
-	Channel*	channel = server->getChannel(channel_name);
 
-	std::cout << "param : " << param << std::endl;
-	if (param.empty() || param[0] != '#')
+	std::istringstream	iss(param);
+	if (!(iss >> channelsParam))
 		throw NoSuchChannel();
-	if (channel)
-	{
-		std::cout << "Channel : " << channel_name << " already exist" << std::endl;
-		// channel = server->getChannel(channel_name);
-		// if (channel->getNbMembers() > )
-		if (channel->isInviteOnly() && !channel->isInvite(client))
-		{
-			std::cout << "You're not invited to this channel\n" << std::endl; // MUST BE A EXCEPTION
-			return ;
-		}
-	}
-	else
-	{
-		std::cout << "Channel : " << channel_name << " be created" << std::endl;
-		channel = new Channel(channel_name);
-		server->addChannel(channel_name, channel);
-		client->setOperators();
-	}
-	channel->addClient(client);
+	iss >> keysParam;
 
-	response = ":" + client->getNickname() + " JOIN " + channel_name + "\r\n";
-	send(client_socket, response.c_str(), response.size(), 0);
+	std::vector<std::string>	channelsList;
+	size_t						start = 0, pos;
+	while ((pos = channelsParam.find(',', start)) != std::string::npos)
+	{
+		channelsList.push_back(channelsParam.substr(start, pos - start));
+		start = pos + 1;
+	}
+	if (start < channelsParam.size())
+		channelsList.push_back(channelsParam.substr(start));
+
+	std::vector<std::string>	keysList;
+	if (!keysParam.empty())
+	{
+		start = 0;
+		while ((pos = keysParam.find(',', start) != std::string::npos))
+		{
+			keysList.push_back(keysParam.substr(start, pos - start));
+			start = pos + 1;
+		}
+		if (start < keysParam.size())
+			keysList.push_back(keysParam.substr(start));
+	}
+
+	for (size_t i = 0; i < channelsList.size(); i++)
+	{
+		std::string channel_name = channelsList[i];
+		if (channel_name.empty() || channel_name[0] != '#')
+			throw NoSuchChannel();
+		Channel*	channel = server->getChannel(channel_name);
+		std::string	key = "";
+		if (i < keysList.size())
+			key = keysList[i];
+		
+		if (!channel)
+		{
+			channel = new Channel(channel_name);
+			server->addChannel(channel_name, channel);
+			channel->setOperator(client);
+		}
+		else if (channel->isInviteOnly() && !channel->isInvite(client))
+			throw InviteOnlyChan(channel->getName());
+
+		channel->addClient(client);
+		response = ":" + client->getNickname() + " JOIN " + channel_name + "\r\n";
+		send(client_socket, response.c_str(), response.size(), 0);
+	}
 }

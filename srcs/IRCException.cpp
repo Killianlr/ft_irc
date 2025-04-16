@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:25:57 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/15 14:28:31 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 16:04:24 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,3 +28,5 @@ NoSuchChannel::NoSuchChannel() : IRCException(":server 403 * :Invalid channel na
 NotOnChannelException::NotOnChannelException( const std::string& channel ) : IRCException(":server 442 * " + channel + " :You're not on that channel\r\n") {} 
 
 ChanOPrivsNeeded::ChanOPrivsNeeded( const std::string& channel ) : IRCException(":server 482 " + channel + " :You're not channel operator\r\n") {}
+
+InviteOnlyChan::InviteOnlyChan( const std::string& channel ) : IRCException(":server 473 " + channel + " :You're not invited to this channel\r\n") {}

@@ -11,7 +11,7 @@ class Channel
 		std::string 			_name;
 		std::vector<Client *> 	_members;
 		std::vector<Client *>	_invited;
-		std::map<int, bool>		_operators;
+		std::vector<Client*>	_operators;
 		std::string				_topic;
 		
 		bool					_inviteOnly;
@@ -40,7 +40,7 @@ class Channel
 		void	addInvite(Client* client);
 		void	removeClient(Client* client);
 
-		void	setOperator(Client* client, bool status);
+		void	setOperator(Client* client);
 		void	setInviteOnly(bool value);
 		void	setTopicRestricted(bool value);
 		void	setKey(const std::string k);

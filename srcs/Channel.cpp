@@ -33,7 +33,7 @@ void	Channel::addClient(Client* client)
 	if (!hasClient(client))
 	{
 		_members.push_back(client);
-		_operators[client->getSocket()] = client->isOperators();
+		// _operators[client->getSocket()] = client->isOperators();
 		client->setCurrentChannel(this);
 	}
 }
@@ -44,13 +44,24 @@ void	Channel::addInvite(Client* client)
 		_invited.push_back(client);
 }
 
-void	Channel::setOperator(Client* client, bool status)
+void	Channel::setOperator(Client* client)
 {
-	_operators[client->getSocket()] = status;
+	_operators.push_back(client);
 }
 
 void	Channel::removeClient(Client* client)
 {
+	if (isOperator(client))
+	{
+		for (std::vector<Client*>::iterator it = _operators.begin(); it != _operators.end(); it++)
+		{
+			if (*it == client)
+			{
+				_operators.erase(it);
+				break ;
+			}
+		}
+	}
 	for (std::vector<Client*>::iterator it = _members.begin(); it != _members.end(); ++it)
 	{
 		if (*it == client)
@@ -59,7 +70,6 @@ void	Channel::removeClient(Client* client)
 			break;
 		}
 	}
-	_operators.erase(client->getSocket());
 }
 
 bool	Channel::hasClient(const Client* client) const
@@ -67,7 +77,7 @@ bool	Channel::hasClient(const Client* client) const
 	for (size_t i = 0; i < _members.size(); ++i)
 	{
 		if (_members[i] == client)
-		return true;
+			return true;
 	}
 	return false;
 }
@@ -84,9 +94,11 @@ bool	Channel::isInvite(Client* client) const
 
 bool	Channel::isOperator(Client* client) const
 {
-	std::map<int, bool>::const_iterator it = _operators.find(client->getSocket());
-	if (it != _operators.end())
-		return (it->second);
+	for (std::vector<Client*>::const_iterator it = _operators.begin(); it != _operators.end(); it++)
+	{
+		if (*it == client)
+			return (true);
+	}
 	return false;
 }
 

@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/15 14:30:49 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 16:03:17 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,13 @@ class ChanOPrivsNeeded : public IRCException
 {
     public:
         ChanOPrivsNeeded( const std::string& );
+};
+
+// ERR_INVITEONLYCHAN (473)
+class InviteOnlyChan : public IRCException
+{
+    public:
+        InviteOnlyChan( const std::string& );
 };
 
 #endif
