@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:22:33 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/15 14:54:46 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 15:16:22 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,20 @@ class CommandHandler
 
 		std::map<std::string, CommandFunction>	commands;
 		IRCServer*								server;
-	
-		void	cmdNick( int, const std::string& );
-		void	cmdUser( int, const std::string& );
+		
 		void	cmdJoin( int, const std::string& );
-		void	cmdPrivmsg( int, const std::string& );
-		void	cmdPing( int, const std::string& );
-		void	cmdPass( int, const std::string& );
+		void	cmdKick( int, const std::string& );
+		void	cmdMode( int, const std::string& );
 		void	cmdTopic( int, const std::string& );
 
-		void	cmdKick( int, const std::string& );
+		void	cmdPrivmsg( int, const std::string& );
+		void	cmdPing( int, const std::string& );
+		void	cmdWho( int, const std::string& );
+		
 		void	cmdInvite( int, const std::string& );
-		void	cmdMode( int, const std::string& );
+		void	cmdNick( int, const std::string& );
+		void	cmdPass( int, const std::string& );
+		void	cmdUser( int, const std::string& );
 
 		void	cmdIgnored( int, const std::string& );
 		
