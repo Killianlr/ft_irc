@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:22:33 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 15:16:22 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 16:48:20 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class CommandHandler
 		
 		void	handleChannelMessage( int, const std::string&, const std::string& );
 		void	handlePrivateMessage( int, const std::string&, const std::string& );
-		void	broadcastToChannel( Channel*, const std::string&, int );
+		void	broadcastToChannel( Channel*, const std::string& );
 		
 	public:
 		CommandHandler( IRCServer* );

@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:26 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 15:00:49 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 16:48:31 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,5 +57,5 @@ void	CommandHandler::cmdTopic( int socket, const std::string& param )
 		throw ChanOPrivsNeeded(target);
 	current->setTopic(topic);
 	std::string	msg = ":" + requester->getNickname() + " TOPIC " + target + " :" + topic + "\r\n";
-	broadcastToChannel(current, msg, -1);
+	broadcastToChannel(current, msg);
 }

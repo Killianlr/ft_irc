@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:18 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 14:58:48 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 17:16:41 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,39 +16,51 @@
 
 void    CommandHandler::cmdKick(int client_socket, const std::string& param)
 {
-    std::istringstream  iss(param);
-    std::string         channel_name, target_nick, reason;
-    Channel*            channel;
-    Client*             kicker;
-    Client*             target;
-    std::string         msg;
+	std::istringstream			iss(param);
+	std::string					channel_name, targets, reason;
+	Channel*					channel;
+	Client*						kicker;
+	Client*						target;
+	std::string					msg;
 
-    iss >> channel_name >> target_nick >> reason;
-    if (reason.empty())
-        reason = "no particular reason";
+	iss >> channel_name >> targets;
 
-    if (channel_name.empty() || target_nick.empty())
-        throw IRCException("Error: Kick syntax invalid\r\n");
-    
-    channel = server->getChannel(channel_name);
-    if (!channel)
-        throw IRCException("Error: Channel not found\r\n");
-    
-    kicker = server->getClient(client_socket);
-    if (!channel->hasClient(kicker) || !channel->isOperator(kicker))
-        throw IRCException("Error: You are not channel operator\r\n");
-    
-    target = server->getClientByNickname(target_nick);
-    if (!target || !channel->hasClient(target))
-        throw IRCException("Error: User not in channel\r\n");
+	if (channel_name.empty() || targets.empty())
+		throw NeedMoreParamsException("KICK");
 
-    channel->removeClient(target);
+	std::vector<std::string>	nicksList;
+	size_t						start = 0, pos;
+	while ((pos = targets.find(',', start)) != std::string::npos)
+	{
+		nicksList.push_back(targets.substr(start, pos - start));
+		start = pos + 1;
+	}
+	if (start < targets.size())
+		nicksList.push_back(targets.substr(start));
 
-    msg = ":" + kicker->getNickname() +
-                " KICK " + channel_name + " " + target_nick +
-                " :" + reason + "\r\n";
-    
-    const std::vector<Client*>& channel_members = channel->getMembers();
-    for (size_t i = 0; i < channel_members.size(); ++i)
-        send(channel_members[i]->getSocket(), msg.c_str(), msg.size(), 0);
+	std::getline(iss >> std::ws, reason);
+	if (reason.empty())
+		reason = "no particular reason";
+
+	channel = server->getChannel(channel_name);
+	if (!channel)
+		throw NoSuchChannel();
+	
+	kicker = server->getClient(client_socket);
+	if (!channel->isOperator(kicker))
+		throw ChanOPrivsNeeded(channel_name);
+	
+	for (size_t i = 0; i < nicksList.size(); i++)
+	{
+		std::string	target_nick = nicksList[i];
+		target = server->getClientByNickname(target_nick);
+		if (!target || !channel->hasClient(target))
+			throw UserNotInChannel(target_nick, channel_name);
+		channel->removeClient(target);
+		msg = ":" + kicker->getNickname() +
+					" KICK " + channel_name + " " + target_nick +
+					" :" + reason + "\r\n";
+		
+		broadcastToChannel(channel, msg);
+	}
 }

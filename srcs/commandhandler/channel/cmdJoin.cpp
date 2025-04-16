@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 16:29:56 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 18:01:27 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,7 @@ void    CommandHandler::cmdJoin( int client_socket, const std::string& param )
 		channel->addClient(client);
 		response = ":" + client->getNickname() + " JOIN " + channel_name + "\r\n";
 		send(client_socket, response.c_str(), response.size(), 0);
+		std::string topicMsg = ":server 332 " + client->getNickname() + " " + channel_name + " :" + channel->getTopic() + "\r\n";
+		send(client_socket, topicMsg.c_str(), topicMsg.size(), 0);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 15:42:55 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 16:48:10 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,9 @@ void    CommandHandler::cmdIgnored( int client_socket, const std::string& param)
     std::cout << ": [Command ignored]" << std::endl;
 }
 
-void	CommandHandler::broadcastToChannel( Channel* channel, const std::string& msg, int exclude_socket )
+void	CommandHandler::broadcastToChannel( Channel* channel, const std::string& msg )
 {
 	const std::vector<Client*>&	members = channel->getMembers();
 	for (std::vector<Client*>::const_iterator it = members.begin(); it != members.end(); it++)
-	{
-		if ((*it)->getSocket() != exclude_socket)
 			send((*it)->getSocket(), msg.c_str(), msg.size(), 0);
-	}
 }

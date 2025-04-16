@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:06 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 16:28:45 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 16:49:37 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,11 @@ void    CommandHandler::cmdMode(int client_socket, const std::string &param)
         throw IRCException("Error: MODE Channel not found\r\n");
     }
 
+    if (!channel->isOperator(server->getClient(client_socket)))
+    {
+        std::cout << "Error: you arent an operator\n" << std::endl;
+        return ;
+    }
     for (size_t i = 0; i < modes.length(); ++i)
     {
         if (modes[i] == '+') adding = true;

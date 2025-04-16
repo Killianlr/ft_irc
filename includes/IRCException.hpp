@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 16:03:17 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 16:44:02 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,13 @@ class InviteOnlyChan : public IRCException
 {
     public:
         InviteOnlyChan( const std::string& );
+};
+
+// ERR_USERNOTINCHANNEL (441)
+class UserNotInChannel : public IRCException
+{
+    public:
+        UserNotInChannel( const std::string&, const std::string& );
 };
 
 #endif
