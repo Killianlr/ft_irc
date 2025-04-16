@@ -6,7 +6,7 @@
 /*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/16 10:16:39 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/16 13:22:15 by rrichard42       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,23 @@
 #include "IRCException.hpp"
 #include "Channel.hpp"
 
+extern volatile sig_atomic_t	running;
+
 IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) 
 {
 	channels["#general"] = new Channel("#general");
 }
 
-IRCServer::~IRCServer() {}
+IRCServer::~IRCServer()
+{
+	for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
+		delete it->second;
+	channels.clear();
+	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
+		delete it->second;
+	clients.clear();
+	poll_fds.clear();
+}
 
 void    IRCServer::start()
 {
@@ -64,11 +75,13 @@ void    IRCServer::runEventLoop()
 	int			poll_count;
 
 	poll_fds.push_back(server_poll_fd);
-	while (true)
+	while (running)
 	{
 		poll_count = poll(&poll_fds[0], poll_fds.size(), POLL_TIMEOUT);
 		if (poll_count == -1)
 		{
+			if (!running)
+				break ;
 			perror("poll");
 			exit(EXIT_FAILURE);
 		}
