@@ -11,3 +11,4 @@ Tests commands mode :
 
     Refuse l'access au channel si le mot de passe ne correspond pas, mais une fois rentrer, il semble qu'il y a plus besoin du mot de passe (bizarre)
     Comportement bizarre quand tu kick qlq'un d'un channel, il ne peux plus le join
+ 

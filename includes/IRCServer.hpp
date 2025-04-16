@@ -28,6 +28,13 @@
 # include "Client.hpp"
 # include "Channel.hpp"
 
+#define ROUGE "\033[0;31m"
+#define VERT "\033[0;32m"
+#define BLEU "\033[0;34m"
+#define MAGENTA "\033[0;35m"
+#define RESET   "\033[0m"
+
+
 typedef struct pollfd t_pollfd;
 
 const int	POLL_TIMEOUT = 1000;

@@ -25,6 +25,7 @@ CommandHandler::CommandHandler( IRCServer* server ) : server(server)
     commands["INVITE"] = &CommandHandler::cmdInvite;
     commands["KICK"] = &CommandHandler::cmdKick;
     commands["MODE"] = &CommandHandler::cmdMode;
+    commands["PART"] = &CommandHandler::cmdPart;
 
 }
 
@@ -153,6 +154,7 @@ void    CommandHandler::cmdPass( int client_socket, const std::string& password 
 
 void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
 {
+    std::cout << MAGENTA << "COMMAND JOIN" << RESET << std::endl;
     std::istringstream  iss(param);
     std::string response;
     std::string channel_name, key;
@@ -162,6 +164,8 @@ void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
 
     if (param.empty() || param[0] != '#')
         throw InvalidChannelNameException();
+    if (client->getCurrentChannel())
+        CommandHandler::cmdPart(client_socket, param);
     if (channel)
     {
         // std::cout << "Channel : " << channel_name << " already exist" << std::endl;
@@ -202,6 +206,7 @@ void    CommandHandler::cmdJoin(int client_socket, const std::string& param)
 
 void    CommandHandler::cmdKick(int client_socket, const std::string& param)
 {
+    std::cout << ROUGE << "COMMAND KICK" << RESET << std::endl;
     std::istringstream  iss(param);
     std::string         channel_name, target_nick, reason;
     Channel*            channel;
@@ -248,6 +253,7 @@ void    CommandHandler::cmdInvite(int client_socket, const std::string& param)
     Channel*            channel;
     std::string         msg;
 
+    std::cout << BLEU << "COMMAND INVITE" << RESET << std::endl;
     iss >> target_nick >> channel_name;
     if (target_nick.empty() || channel_name.empty())
         throw NeedMoreParamsException("INVITE");
@@ -271,6 +277,7 @@ void    CommandHandler::cmdInvite(int client_socket, const std::string& param)
 
 void    CommandHandler::cmdMode(int client_socket, const std::string &param)
 {
+    std::cout << VERT << "COMMAND MODE" << RESET << std::endl;
     std::istringstream  iss(param);
     std::string         channel_name, modes, params, msg;
     Client*             target;
@@ -360,6 +367,23 @@ void    CommandHandler::cmdMode(int client_socket, const std::string &param)
         }
     }
     msg = ":" + (server->getClient(client_socket))->getNickname() + " MODE #" + channel_name + " " + modes + "\r\n";
+    
+    const std::vector<Client*>& channel_members = channel->getMembers();
+    for (size_t i = 0; i < channel_members.size(); ++i)
+        send(channel_members[i]->getSocket(), msg.c_str(), msg.size(), 0);
+}
+
+void    CommandHandler::cmdPart( int client_socket, const std::string& param)
+{
+    std::cout << ROUGE << "COMMAND PART" << RESET << std::endl;
+    (void)param;
+    Client*     client          = server->getClient(client_socket);
+    Channel*    channel         = client->getCurrentChannel();
+
+    channel->removeClient(client);
+    client->setCurrentChannel(NULL);
+    std::string msg;
+    msg = ":" + (server->getClient(client_socket))->getNickname() + " QUIT " + channel->getName() + "\r\n";
     
     const std::vector<Client*>& channel_members = channel->getMembers();
     for (size_t i = 0; i < channel_members.size(); ++i)

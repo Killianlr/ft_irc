@@ -35,6 +35,7 @@ class CommandHandler
 		void	cmdKick( int, const std::string& );
 		void	cmdInvite( int, const std::string& );
 		void	cmdMode( int, const std::string& );
+		void	cmdPart( int, const std::string& );
 
 		void	cmdIgnored( int, const std::string& );
 		
