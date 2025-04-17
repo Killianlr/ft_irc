@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdMode.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:06 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 16:49:37 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/17 18:39:14 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,93 +20,73 @@ void    CommandHandler::cmdMode(int client_socket, const std::string &param)
     std::string         channel_name, modes, params, msg;
     Client*             target;
     Channel*            channel;
-    bool                adding = true;
+    bool                adding = false;
 
     iss >> channel_name >> modes >> params;
-    if (param[0] != '#')
-    {
-        std::cout << "User MODE command received: ignoring for now" << std::endl;
-        return ;
-    }
     
-    if (channel_name.empty() || modes.empty())
-    {
-        std::cout << "Error: MODE syntax invalid" << std::endl;
-        throw IRCException("Error: MODE syntax invalid\r\n");
-    }
     channel = server->getChannel(channel_name);
     if (!channel)
-    {
-        std::cout << "Error: MODE Channel not found" << std::endl;
-        throw IRCException("Error: MODE Channel not found\r\n");
-    }
+		throw NoSuchChannel();
 
     if (!channel->isOperator(server->getClient(client_socket)))
+		throw ChanOPrivsNeeded(channel_name);
+
+	if (modes[0] == '+')
+		adding = true;
+    for (size_t i = 1; i < modes.length(); ++i)
     {
-        std::cout << "Error: you arent an operator\n" << std::endl;
-        return ;
-    }
-    for (size_t i = 0; i < modes.length(); ++i)
-    {
-        if (modes[i] == '+') adding = true;
-        else if (modes[i] == '-') adding = false;
-        else if (modes[i] == 'i') channel->setInviteOnly(adding);
-        else if (modes[i] == 't') channel->setTopicRestricted(adding);
-        else if (modes[i] == 'k')
-        {
-            if (adding)
-            {
-                if (params.empty())
-                {
-                    std::cout << "Error: MODE +k missing key" << std::endl;
-                    throw IRCException("Error: MODE +k missing key\r\n");
-                }
-                channel->setKey(params);
-            }
-            else
-                channel->setKey("");
-        }
-        else if (modes[i] == 'l')
-        {
-            if (adding)
-            {
-                if (params.empty())
-                {
-                    std::cout << "Error: MODE +l missing limit value" << std::endl;
-                    throw IRCException("Error: MODE +l missing limit value\r\n");
-                }
-                channel->setUserLimit(atoi(params.c_str()));
-            }
-            else
-                channel->setUserLimit(-1);
-        }
-        else if (modes[i] == 'o')
-        {
-            if (params.empty())
-            {
-                std::cout << "Error: MODE +o missing nickname" << std::endl;
-                throw IRCException("Error: MODE +o missing nickname\r\n");
-            }
-            target = server->getClientByNickname(params);
-            if (!target)
-            {
-                std::cout << "Error: MODE +o no such nickname" << std::endl;
-                throw IRCException("Error: MODE +o no such nickname\r\n");
-            }
-            if (adding)
-                channel->setOperator(target);
-            else
-                channel->setOperator(target);
-        }
-        else
-        {
-            std::cout << "Error: Unknown mode" << std::endl;
-            throw IRCException("Error: Unknown mode\r\n");
-        }
+		switch (modes[i])
+		{
+			case 'i':
+				channel->setInviteOnly(adding);
+				break;
+			case 't':
+				channel->setTopicRestricted(adding);
+				break;
+			case 'k':
+			{
+				if (adding)
+				{
+					if (params.empty())
+						throw InvalidModeParam(channel_name, modes[i], params);
+					channel->setKey(params);
+				}
+				else
+					channel->setKey("");
+				break;
+			}
+			case 'l':
+			{
+				if (adding)
+            	{
+					std::istringstream	isslimit(params);
+					int					limit;
+
+					if (!(iss >> limit))
+						throw InvalidModeParam(channel_name, 'l', params);
+					channel->setUserLimit(limit);
+            	}
+            	else
+                	channel->setUserLimit(-1);
+				break;
+			}
+			case 'o':
+			{
+				if (params.empty())
+					throw InvalidModeParam(channel_name, modes[i], params);
+				target = server->getClientByNickname(params);
+				if (!target)
+					throw NoSuchNick(params);
+				if (adding)
+					channel->setOperator(target);
+				else
+					channel->setOperator(target);
+				break;
+			}
+			default:
+				throw UModeUnkownFlag();
+		}
     }
     msg = ":" + (server->getClient(client_socket))->getNickname() + " MODE #" + channel_name + " " + modes + "\r\n";
-    
-    const std::vector<Client*>& channel_members = channel->getMembers();
-    for (size_t i = 0; i < channel_members.size(); ++i)
-        send(channel_members[i]->getSocket(), msg.c_str(), msg.size(), 0);
+	broadcastToChannel(channel, msg);
 }

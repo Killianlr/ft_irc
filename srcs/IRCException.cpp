@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCException.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:25:57 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 16:45:20 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/17 18:38:18 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ NicknameInUse::NicknameInUse( const std::string& nickname ) : IRCException(":ser
 
 NoSuchChannel::NoSuchChannel() : IRCException(":server 403 * :Invalid channel name\r\n") {}
 
+NoSuchNick::NoSuchNick( const std::string& nick ) : IRCException(":server 401 " + nick + " :No such nickname\r\n") {}
+
 NotOnChannelException::NotOnChannelException( const std::string& channel ) : IRCException(":server 442 * " + channel + " :You're not on that channel\r\n") {} 
 
 ChanOPrivsNeeded::ChanOPrivsNeeded( const std::string& channel ) : IRCException(":server 482 " + channel + " :You're not channel operator\r\n") {}
@@ -32,3 +34,7 @@ ChanOPrivsNeeded::ChanOPrivsNeeded( const std::string& channel ) : IRCException(
 InviteOnlyChan::InviteOnlyChan( const std::string& channel ) : IRCException(":server 473 " + channel + " :You're not invited to this channel\r\n") {}
 
 UserNotInChannel::UserNotInChannel( const std::string& nick, const std::string& channel ) : IRCException(":server 441 " + nick + " " + channel + " :They aren't on that channel\r\n") {}
+
+InvalidModeParam::InvalidModeParam( const std::string& target, char modeChar, const std::string& param ) : IRCException(":server 696 " + target + " " + modeChar + " " + param + " :Invalid parameter\r\n") {}
+
+UModeUnkownFlag::UModeUnkownFlag() : IRCException("Unkown MODE flag\r\n") {}

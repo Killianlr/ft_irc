@@ -122,7 +122,7 @@ void	Channel::setTopicRestricted(bool value)
 	_topicRestricted = value;
 }
 
-void	Channel::setKey(const std::string k)
+void	Channel::setKey(const std::string& k)
 {
 	_key = k;
 }

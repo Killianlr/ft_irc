@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCException.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 16:44:02 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/17 18:37:45 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,13 @@ class NicknameInUse : public IRCException
         NicknameInUse( const std::string& );
 };
 
+// ERR_NOSUCHNICK (401)
+class NoSuchNick : public IRCException
+{
+	public:
+		NoSuchNick( const std::string& );
+};
+
 // ERR_NOSUCHCHANNEL (403)
 class NoSuchChannel : public IRCException
 {
@@ -83,6 +90,20 @@ class UserNotInChannel : public IRCException
 {
     public:
         UserNotInChannel( const std::string&, const std::string& );
+};
+
+// ERR_UMODEUNKOWNFLAG (501)
+class UModeUnkownFlag : public IRCException
+{
+	public:
+		UModeUnkownFlag();
+}
+
+// ERR_INVALIDMODEPARAM (696)
+class InvalidModeParam : public IRCException
+{
+	public:
+		InvalidModeParam( const std::string&, char, const std::string& );
 };
 
 #endif

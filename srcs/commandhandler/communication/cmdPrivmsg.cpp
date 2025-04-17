@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdPrivmsg.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:52:56 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 14:59:36 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/17 11:13:52 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,7 @@ void    CommandHandler::handleChannelMessage( int client_socket, const std::stri
 void	CommandHandler::handlePrivateMessage( int client_socket, const std::string& target, const std::string& message )
 {
 	if (!server->getClientByNickname(target))
-	{
-		std::string response = ":server 401 * " + target + " :No such nick/channel\r\n";
-		send(client_socket, response.c_str(), response.size(), 0);
-		return ;
-	}
+		throw NoSuchChannel();
 
 	Client*		sender = server->getClient(client_socket);
 	Client*		receiver = server->getClientByNickname(target);

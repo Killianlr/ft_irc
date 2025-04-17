@@ -43,7 +43,7 @@ class Channel
 		void	setOperator(Client* client);
 		void	setInviteOnly(bool value);
 		void	setTopicRestricted(bool value);
-		void	setKey(const std::string k);
+		void	setKey(const std::string& k);
 		void	setUserLimit(int limit);
 		void	setTopic( const std::string& );
 		
