@@ -23,22 +23,27 @@ INCS = -I$(INC_PATH)
 
 SRCS_FILES =	main.cpp \
 \
-				commandhandler/channel/cmdJoin.cpp \
-				commandhandler/channel/cmdKick.cpp \
-				commandhandler/channel/cmdMode.cpp \
-				commandhandler/channel/cmdTopic.cpp \
-				commandhandler/communication/cmdPing.cpp \
-				commandhandler/communication/cmdPrivmsg.cpp \
-				commandhandler/registration/cmdInvite.cpp \
-				commandhandler/registration/cmdNick.cpp \
-				commandhandler/registration/cmdPass.cpp \
-				commandhandler/registration/cmdUser.cpp \
+					commandhandler/channel/cmdJoin.cpp \
+					commandhandler/channel/cmdKick.cpp \
+					commandhandler/channel/cmdMode.cpp \
+					commandhandler/channel/cmdTopic.cpp \
+				\
+					commandhandler/communication/cmdNames.cpp \
+					commandhandler/communication/cmdPing.cpp \
+					commandhandler/communication/cmdPrivmsg.cpp \
+				\
+					commandhandler/registration/cmdInvite.cpp \
+					commandhandler/registration/cmdNick.cpp \
+					commandhandler/registration/cmdPass.cpp \
+					commandhandler/registration/cmdUser.cpp \
+				\
 				commandhandler/CommandHandler.cpp \
 \
-				IRCServer.cpp \
-				IRCException.cpp \
-				Client.cpp \
-				Channel.cpp \
+				error/IRCException.cpp \
+\
+				server/Channel.cpp \
+				server/Client.cpp \
+				server/IRCServer.cpp \
 				
 
 ################################################################################
@@ -84,6 +89,8 @@ $(OBJS_PATH):
 	@mkdir -p .obj/commandhandler/channel
 	@mkdir -p .obj/commandhandler/registration
 	@mkdir -p .obj/commandhandler/communication
+	@mkdir -p .obj/error
+	@mkdir -p .obj/server
 
 $(NAME): $(OBJS_PATH) $(OBJS)
 	@$(call run_and_test, $(CC) $(CFLAGS) -o $@ $(OBJS))

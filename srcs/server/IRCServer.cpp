@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/16 13:22:15 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/18 16:24:37 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void    IRCServer::runEventLoop()
 		for (size_t i = 1; i < poll_fds.size(); i++)
 			if (poll_fds[i].revents & POLLIN)
 				handleClientData(poll_fds[i].fd);
+		checkCurrentChannels();
 	}
 }
 
@@ -110,7 +111,6 @@ void	IRCServer::handleNewConnection()
 	clients[new_socket] = new Client(new_socket);
 	std::cout << "New client connected: " << new_socket << std::endl;
 	channels["#general"]->addClient(clients[new_socket]); // ajout du nouveau client dans le channel #general
-	
 }
 
 void	IRCServer::handleClientData( int client_socket )
@@ -221,4 +221,22 @@ std::vector<Client*>	IRCServer::getClientsInChannel( const std::string& channel_
 	if (it == channels.end())
 		return (empty);
 	return (it->second->getMembers());
+}
+
+void	IRCServer::checkCurrentChannels()
+{
+	if (channels.size() <= 1)
+		return ;
+	for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end();)
+	{
+		Channel *chan = it->second;
+		if (chan && chan->getNbMembers() == 0)
+		{
+			std::map<std::string, Channel*>::iterator toErase = it++;
+			delete chan;
+			channels.erase(toErase);
+		}
+		else
+			it++;
+	}
 }

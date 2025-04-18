@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:06 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/18 12:28:58 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/18 16:54:37 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,9 @@ void    CommandHandler::cmdMode( int client_socket, const std::string& param )
 
 	bool	adding = true;
 	size_t i = 0;
+	if (modes[0] != '+' && modes[0] != '-')
+		throw UModeUnkownFlag();
+
     while (i < modes.length())
     {
 		char	ch = modes[i];

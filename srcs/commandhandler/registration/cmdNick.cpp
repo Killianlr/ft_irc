@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdNick.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:39 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 14:52:05 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/18 15:20:53 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 	}
 	
 	server->getClient(client_socket)->setNickname(nickname);
-	std::cout << "Nickname is set to: " + server->getClient(client_socket)->getNickname() << std::endl;
 	if (!server->getClient(client_socket)->getUsername().empty())
 	{
 		response = ":server 001 " + nickname + " :Welcome to the IRC Server\r\n";

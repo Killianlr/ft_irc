@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CommandHandler.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 16:48:10 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/18 13:27:13 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ CommandHandler::CommandHandler( IRCServer* server ) : server(server)
     commands["KICK"] = &CommandHandler::cmdKick;
     commands["MODE"] = &CommandHandler::cmdMode;
 	commands["TOPIC"] = &CommandHandler::cmdTopic;
+	commands["NAMES"] = &CommandHandler::cmdNames;
 }
 
 void	CommandHandler::handleCommand( int client_socket, const std::string& message )

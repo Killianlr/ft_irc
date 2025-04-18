@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdInvite.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:42 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 14:59:02 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/18 16:47:53 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ void    CommandHandler::cmdInvite(int client_socket, const std::string& param)
     inviter = server->getClient(client_socket);
     target  = server->getClientByNickname(target_nick);
     if (!target)
-        throw IRCException("Error: User not found\r\n");
+        throw NoSuchNick(target_nick);
     
     channel = server->getChannel(channel_name);
     if (!channel)
         throw NoSuchChannel();
     if (!channel->hasClient(inviter) || !channel->isOperator(inviter))
-        throw IRCException(":server 482 " + channel_name + " :Invalid channel name\r\n");
+        throw ChanOPrivsNeeded(channel_name);
 
     channel->addInvite(target);
     

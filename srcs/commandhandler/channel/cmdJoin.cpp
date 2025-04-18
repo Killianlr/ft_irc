@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/18 13:02:23 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/18 16:51:43 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void    CommandHandler::cmdJoin( int client_socket, const std::string& param )
 			throw InviteOnlyChan(channel->getName());
 		if (channel && !channel->getKey().empty())
 		{
-			if (key != channel->getKey())
+			if (key != channel->getKey() && !channel->isInvite(client))
 				throw BadChannelKey(channel->getName());
 		}
 		else if (channel && channel->getUserLimit() >= 0)
@@ -78,6 +78,7 @@ void    CommandHandler::cmdJoin( int client_socket, const std::string& param )
 		channel->addClient(client);
 		response = ":" + client->getNickname() + " JOIN " + channel_name + "\r\n";
 		send(client_socket, response.c_str(), response.size(), 0);
+
 		std::string topicMsg = ":server 332 " + client->getNickname() + " " + channel_name + " :" + channel->getTopic() + "\r\n";
 		send(client_socket, topicMsg.c_str(), topicMsg.size(), 0);
 	}

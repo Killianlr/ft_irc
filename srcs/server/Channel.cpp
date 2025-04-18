@@ -33,7 +33,6 @@ void	Channel::addClient(Client* client)
 	if (!hasClient(client))
 	{
 		_members.push_back(client);
-		// _operators[client->getSocket()] = client->isOperators();
 		client->setCurrentChannel(this);
 	}
 }
@@ -79,7 +78,7 @@ void	Channel::removeClient(Client* client)
 		if (*it == client)
 		{
 			_members.erase(it);
-			break;
+			break ;
 		}
 	}
 }
@@ -111,7 +110,7 @@ bool	Channel::isOperator(Client* client) const
 		if (*it == client)
 			return (true);
 	}
-	return false;
+	return (false);
 }
 
 const std::string &Channel::getName() const

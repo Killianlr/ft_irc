@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/16 11:06:12 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/18 15:57:49 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ class IRCServer
 		void	runEventLoop();
 		void	handleNewConnection();
 		void	handleClientData( int );
+		void	checkCurrentChannels();
 	
 	public:
 		std::map<int, std::string>	clientBuffers;
