@@ -35,23 +35,26 @@ class Channel
 		int								getNbMembers() const;
 		std::vector<Client*>			getClients() const;
 		const std::string				&getTopic() const;
+		std::string						getModeString() const;
+		std::string						getModeParameters() const;
 
-		void	addClient(Client* client);
-		void	addInvite(Client* client);
-		void	removeClient(Client* client);
+		void							addClient(Client* client);
+		void							addInvite(Client* client);
+		void							removeClient(Client* client);
+		void							removeOperator( Client* client );
 
-		void	setOperator(Client* client);
-		void	setInviteOnly(bool value);
-		void	setTopicRestricted(bool value);
-		void	setKey(const std::string& k);
-		void	setUserLimit(int limit);
-		void	setTopic( const std::string& );
+		void							setOperator(Client* client);
+		void							setInviteOnly(bool value);
+		void							setTopicRestricted(bool value);
+		void							setKey(const std::string& k);
+		void							setUserLimit(int limit);
+		void							setTopic( const std::string& );
 		
-		bool	isInvite(Client* client) const;
-		bool	isOperator(Client* client) const;
-		bool	isInviteOnly() const;
-		bool	isTopicRestricted() const;
-		bool	hasClient( const Client* ) const;
+		bool							isInvite(Client* client) const;
+		bool							isOperator(Client* client) const;
+		bool							isInviteOnly() const;
+		bool							isTopicRestricted() const;
+		bool							hasClient( const Client* ) const;
 
 };
 

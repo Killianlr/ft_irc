@@ -49,6 +49,18 @@ void	Channel::setOperator(Client* client)
 	_operators.push_back(client);
 }
 
+void	Channel::removeOperator( Client* client )
+{
+	for (std::vector<Client*>::iterator it = _operators.begin(); it != _operators.end(); it++)
+	{
+		if (*it == client)
+		{
+			_operators.erase(it);
+			break ;
+		}
+	}
+}
+
 void	Channel::removeClient(Client* client)
 {
 	if (isOperator(client))
@@ -165,4 +177,33 @@ const std::string&	Channel::getTopic() const
 void	Channel::setTopic( const std::string& str )
 {
 	this->_topic = str;
+}
+
+std::string	Channel::getModeString() const
+{
+	std::string	str = "+";
+
+	if (_inviteOnly) str += "i";
+	if (_topicRestricted) str += "t";
+	if (!_key.empty()) str += "k";
+	if (_userLimit > 0) str += "l";
+
+	return (str);
+}
+
+std::string	Channel::getModeParameters() const
+{
+	std::string	str;
+
+	if (!_key.empty())
+		str += _key + " ";
+	if (_userLimit > 0)
+	{
+		std::ostringstream oss;
+		oss << _userLimit;
+		str += oss.str() + " ";
+	}
+	if (!str.empty() && str[str.size() - 1] == ' ')
+		str.erase(str.size() - 1);
+	return (str);
 }

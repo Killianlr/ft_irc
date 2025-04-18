@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/17 18:37:45 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/18 12:57:27 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,13 +97,27 @@ class UModeUnkownFlag : public IRCException
 {
 	public:
 		UModeUnkownFlag();
-}
+};
 
 // ERR_INVALIDMODEPARAM (696)
 class InvalidModeParam : public IRCException
 {
 	public:
 		InvalidModeParam( const std::string&, char, const std::string& );
+};
+
+// ERR_CHANNELISFULL (471)
+class ChannelIsFull : public IRCException
+{
+	public:
+		ChannelIsFull( const std::string& );
+};
+
+// ERR_BADCHANNELKEY (475)
+class BadChannelKey : public IRCException
+{
+	public:
+		BadChannelKey( const std::string& );
 };
 
 #endif

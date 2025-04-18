@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdJoin.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 18:01:27 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/18 13:02:23 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,18 @@ void    CommandHandler::cmdJoin( int client_socket, const std::string& param )
 			server->addChannel(channel_name, channel);
 			channel->setOperator(client);
 		}
-		else if (channel->isInviteOnly() && !channel->isInvite(client))
+		if (channel && channel->isInviteOnly() && !channel->isInvite(client))
 			throw InviteOnlyChan(channel->getName());
-
+		if (channel && !channel->getKey().empty())
+		{
+			if (key != channel->getKey())
+				throw BadChannelKey(channel->getName());
+		}
+		else if (channel && channel->getUserLimit() >= 0)
+		{
+			if (channel->getNbMembers() >= channel->getUserLimit())
+				throw ChannelIsFull(channel->getName());
+		}
 		channel->addClient(client);
 		response = ":" + client->getNickname() + " JOIN " + channel_name + "\r\n";
 		send(client_socket, response.c_str(), response.size(), 0);

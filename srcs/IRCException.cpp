@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:25:57 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/17 18:38:18 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/18 12:58:51 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,9 @@ UserNotInChannel::UserNotInChannel( const std::string& nick, const std::string& 
 
 InvalidModeParam::InvalidModeParam( const std::string& target, char modeChar, const std::string& param ) : IRCException(":server 696 " + target + " " + modeChar + " " + param + " :Invalid parameter\r\n") {}
 
-UModeUnkownFlag::UModeUnkownFlag() : IRCException("Unkown MODE flag\r\n") {}
+UModeUnkownFlag::UModeUnkownFlag() : IRCException(":server 501 * :Unkown MODE flag\r\n") {}
+
+ChannelIsFull::ChannelIsFull( const std::string& channel ) : IRCException(":server 471 " + channel + " :Cannot join channel (+l)\r\n") {}
+
+BadChannelKey::BadChannelKey( const std::string& channel ) : IRCException(":server 475 " + channel + " :Cannot join channel (+k)\r\n") {}
+
