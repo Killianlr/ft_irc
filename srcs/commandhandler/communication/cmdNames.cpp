@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:26:51 by rrichard          #+#    #+#             */
-/*   Updated: 2025/04/19 16:09:31 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/21 13:46:52 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,12 @@ void	CommandHandler::cmdNames( int client_socket, const std::string& param )
 
 	if (param.empty())
 	{
-		// No parameter: list all channels
 		const std::map<std::string, Channel*>& chans = server->getChannels();
 		for (std::map<std::string, Channel*>::const_iterator it = chans.begin(); it != chans.end(); ++it)
 			channelsList.push_back(it->first);
 	}
 	else
 	{
-		// Parse comma-separated list of channel names
 		std::string channelsParam = param;
 		size_t start = 0, pos;
 		while ((pos = channelsParam.find(',', start)) != std::string::npos)
@@ -61,7 +59,6 @@ void	CommandHandler::cmdNames( int client_socket, const std::string& param )
 			channelsList.push_back(channelsParam.substr(start));
 	}
 
-	// For each requested channel, send NAMES list or end-of-names
 	for (size_t i = 0; i < channelsList.size(); ++i)
 	{
 		const std::string& chanName = channelsList[i];
@@ -70,7 +67,6 @@ void	CommandHandler::cmdNames( int client_socket, const std::string& param )
 			sendNamesList(channel, client);
 		else
 		{
-			// RPL_ENDOFNAMES for non-existent channel
 			std::string reply = ":ft_irc 366 " + client->getNickname() + " " + chanName + " :End of /NAMES list.\r\n";
 			send(client->getSocket(), reply.c_str(), reply.size(), 0);
 		}
