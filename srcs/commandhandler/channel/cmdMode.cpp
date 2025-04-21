@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:06 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/18 16:54:37 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/19 16:09:00 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void    CommandHandler::cmdMode( int client_socket, const std::string& param )
 	{
 		std::string	modeString = channel->getModeString();
 		std::string	params = channel->getModeParameters();
-		std::string	reply = ":server 324 " + server->getClient(client_socket)->getNickname() + " " + channel_name + " " + modeString;
+		std::string	reply = ":ft_irc 324 " + server->getClient(client_socket)->getNickname() + " " + channel_name + " " + modeString;
 
 		if (!params.empty())
 			reply += " " + params;

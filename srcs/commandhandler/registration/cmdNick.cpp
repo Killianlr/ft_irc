@@ -31,7 +31,7 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 	server->getClient(client_socket)->setNickname(nickname);
 	if (!server->getClient(client_socket)->getUsername().empty())
 	{
-		response = ":server 001 " + nickname + " :Welcome to the IRC Server\r\n";
+		response = ":ft_irc 001 " + nickname + " :Welcome to the IRC Server\r\n";
 		send(client_socket, response.c_str(), response.size(), 0);
 	}
 }

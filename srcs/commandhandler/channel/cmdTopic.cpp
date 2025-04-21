@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdTopic.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:26 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 16:48:31 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/19 16:09:31 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ void	CommandHandler::cmdTopic( int socket, const std::string& param )
 	{
 		std::string	response;
 		if (current->getTopic().empty())
-			response = ":server 331 " + requester->getNickname() + " " + target + " :No topic is set\r\n";
+			response = ":ft_irc 331 " + requester->getNickname() + " " + target + " :No topic is set\r\n";
 		else
-			response = ":server 332 " + requester->getNickname() + " " + target + " :" + current->getTopic() + "\r\n";
+			response = ":ft_irc 332 " + requester->getNickname() + " " + target + " :" + current->getTopic() + "\r\n";
 		send(socket, response.c_str(), response.size(), 0);
 		return ;
 	}

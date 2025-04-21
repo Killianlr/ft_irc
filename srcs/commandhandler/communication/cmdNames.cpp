@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:26:51 by rrichard          #+#    #+#             */
-/*   Updated: 2025/04/18 14:58:15 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/19 16:09:31 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,38 +27,52 @@ void	CommandHandler::sendNamesList( Channel* channel, Client* client )
 		if (i + 1 < users.size())
 			names += " ";
 	}
-	std::string reply = ":server 353 " + client->getNickname() + " = " + channel->getName() + " :" + names + "\r\n";
+	std::string reply = ":ft_irc 353 " + client->getNickname() + " = " + channel->getName() + " :" + names + "\r\n";
 	send(client->getSocket(), reply.c_str(), reply.size(), 0);
 
 	// RPL_ENDOFNAMES (366)
-	reply = ":server 366 " + client->getNickname() + " " + channel->getName() + " :End of /NAMES list.\r\n";
+	reply = ":ft_irc 366 " + client->getNickname() + " " + channel->getName() + " :End of /NAMES list.\r\n";
 	send(client->getSocket(), reply.c_str(), reply.size(), 0);
 }
 
 void	CommandHandler::cmdNames( int client_socket, const std::string& param )
 {
-	std::string					channelsParam;
+	Client* 					client = server->getClient(client_socket);
 	std::vector<std::string>	channelsList;
-	size_t						start = 0, pos;
-
-	while ((pos = channelsParam.find(',', start)) != std::string::npos)
-	{
-		channelsList.push_back(channelsParam.substr(start, pos - start));
-		start = pos + 1;
-	}
-	if (start < channelsParam.size())
-		channelsList.push_back(channelsParam.substr(start));
 
 	if (param.empty())
 	{
-		// std::string reply = ":server 366 " + client->getNickname() + " " + channel->getName() + " :End of /NAMES list.\r\n";
-		// send(client->getSocket(), reply.c_str(), reply.size(), 0);
-		return ;
+		// No parameter: list all channels
+		const std::map<std::string, Channel*>& chans = server->getChannels();
+		for (std::map<std::string, Channel*>::const_iterator it = chans.begin(); it != chans.end(); ++it)
+			channelsList.push_back(it->first);
 	}
 	else
 	{
-		Channel*	channel = server->getChannel(param);
+		// Parse comma-separated list of channel names
+		std::string channelsParam = param;
+		size_t start = 0, pos;
+		while ((pos = channelsParam.find(',', start)) != std::string::npos)
+		{
+			channelsList.push_back(channelsParam.substr(start, pos - start));
+			start = pos + 1;
+		}
+		if (start < channelsParam.size())
+			channelsList.push_back(channelsParam.substr(start));
+	}
+
+	// For each requested channel, send NAMES list or end-of-names
+	for (size_t i = 0; i < channelsList.size(); ++i)
+	{
+		const std::string& chanName = channelsList[i];
+		Channel* channel = server->getChannel(chanName);
 		if (channel)
-			sendNamesList(channel, server->getClient(client_socket));
+			sendNamesList(channel, client);
+		else
+		{
+			// RPL_ENDOFNAMES for non-existent channel
+			std::string reply = ":ft_irc 366 " + client->getNickname() + " " + chanName + " :End of /NAMES list.\r\n";
+			send(client->getSocket(), reply.c_str(), reply.size(), 0);
+		}
 	}
 }

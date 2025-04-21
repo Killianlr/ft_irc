@@ -53,7 +53,7 @@ void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 	client.setRealname(realname);
 	if (!client.getNickname().empty())
 	{
-		response = ":server 001 " + client.getNickname() + " :Welcome to the IRC Server\r\n";
+		response = ":ft_irc 001 " + client.getNickname() + " :Welcome to the IRC Server\r\n";
 		client.setRegistered();
 		send(client_socket, response.c_str(), response.size(), 0);
 	}

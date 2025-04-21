@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/18 15:57:49 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/19 16:18:11 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,18 @@ class IRCServer
 		IRCServer( int, const std::string& );
 		~IRCServer();
 
-		Client*						getClient( int ) const;
-		Client*						getClientByNickname( const std::string& ) const;
-		std::vector<const Client*>	getListClients() const;
-		const std::string&			getPassword() const;
-		Channel*					getChannel( std::string );
+		Client*									getClient( int ) const;
+		Client*									getClientByNickname( const std::string& ) const;
+		std::vector<const Client*>				getListClients() const;
+		const std::string&						getPassword() const;
+		Channel*								getChannel( std::string );
 		
-		void						start();
-		void						closeClientConnection( int );
-		void						addChannel(std::string channel_name, Channel* newChannel);
-		bool						isClientInChannel( int, const std::string& ) const;
-		std::vector<Client*>		getClientsInChannel( const std::string& ) const;
+		void									start();
+		void									closeClientConnection( int );
+		void									addChannel(std::string channel_name, Channel* newChannel);
+		bool									isClientInChannel( int, const std::string& ) const;
+		std::vector<Client*>					getClientsInChannel( const std::string& ) const;
+		const std::map<std::string, Channel*>&	getChannels() const;
 };
 
 #endif

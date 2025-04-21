@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/18 16:24:37 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/19 16:17:14 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,6 +221,11 @@ std::vector<Client*>	IRCServer::getClientsInChannel( const std::string& channel_
 	if (it == channels.end())
 		return (empty);
 	return (it->second->getMembers());
+}
+
+const std::map<std::string, Channel*>& IRCServer::getChannels() const
+{
+    return channels;
 }
 
 void	IRCServer::checkCurrentChannels()

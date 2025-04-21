@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdPass.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:37 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 14:55:55 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/21 10:23:01 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,6 @@ void    CommandHandler::cmdPass( int client_socket, const std::string& password 
 		throw PasswordMismatchException();
 
 	client.setAuthenticated();
-	response = ":server NOTICE * :Password accepted\r\n";
+    response = ":ft_irc NOTICE * :Password accepted\r\n";
 	send(client_socket, response.c_str(), response.size(), 0);
 }
