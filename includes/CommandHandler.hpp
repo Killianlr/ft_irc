@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:22:33 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/18 14:56:57 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/21 20:48:11 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ class CommandHandler
 		void	handleChannelMessage( int, const std::string&, const std::string& );
 		void	handlePrivateMessage( int, const std::string&, const std::string& );
 		void	broadcastToChannel( Channel*, const std::string& );
+		void	sendNumericReply( int, int, const std::string& );
 		void	sendNamesList( Channel*, Client* );
 		
 	public:
