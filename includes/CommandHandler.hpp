@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:22:33 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/21 20:48:11 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:35:47 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class CommandHandler
 		void	cmdKick( int, const std::string& );
 		void	cmdMode( int, const std::string& );
 		void	cmdTopic( int, const std::string& );
+		void	cmdPart( int, const std::string& );
 
 		void	cmdPrivmsg( int, const std::string& );
 		void	cmdPing( int, const std::string& );

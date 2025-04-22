@@ -27,6 +27,7 @@ SRCS_FILES =	main.cpp \
 					commandhandler/channel/cmdKick.cpp \
 					commandhandler/channel/cmdMode.cpp \
 					commandhandler/channel/cmdTopic.cpp \
+					commandhandler/channel/cmdPart.cpp \
 				\
 					commandhandler/communication/cmdNames.cpp \
 					commandhandler/communication/cmdPing.cpp \

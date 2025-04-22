@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/22 12:06:05 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:47:53 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ CommandHandler::CommandHandler( IRCServer* server ) : server(server)
     commands["MODE"] = &CommandHandler::cmdMode;
 	commands["TOPIC"] = &CommandHandler::cmdTopic;
 	commands["NAMES"] = &CommandHandler::cmdNames;
+	commands["PART"] = &CommandHandler::cmdPart;
 }
 
 void	CommandHandler::handleCommand( int client_socket, const std::string& message )
@@ -52,7 +53,10 @@ void	CommandHandler::handleCommand( int client_socket, const std::string& messag
 		std::cout << errorMsg << std::endl;
 		send(client_socket, errorMsg.c_str(), errorMsg.size(), 0);
 		if (!server->getClient(client_socket)->isRegistered())
+		{
+			std::cout << "Client not registered\n";
 			server->closeClientConnection(client_socket);
+		}
 	}
 }
 

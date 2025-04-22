@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:39 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/21 22:42:40 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:13:46 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 {
 	if (!server->getClient(client_socket)->isAuthenticated())
 		throw PasswordMismatchException();
-	
+
 	if (nickname.empty())
 		throw NeedMoreParamsException("NICK");
 	if (nickname.length() > 16)
@@ -32,11 +32,20 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 		if ((*it)->getNickname() == nickname)
 			throw NicknameInUse(nickname);
 	}
-	
-	server->getClient(client_socket)->setNickname(nickname);
-	if (!server->getClient(client_socket)->getUsername().empty())
+
+	if (server->getClient(client_socket)->getNickname().empty())
 	{
-		response = ":ft_irc 001 " + nickname + " :Welcome to the IRC Server\r\n";
+		server->getClient(client_socket)->setNickname(nickname);
+		if (!server->getClient(client_socket)->getUsername().empty())
+		{
+			response = ":ft_irc 001 " + nickname + " :Welcome to the IRC Server\r\n";
+			send(client_socket, response.c_str(), response.size(), 0);
+		}
+	}
+	else
+	{
+		response = ":" + server->getClient(client_socket)->getNickname() + " NICK " + nickname + "\r\n";
+		server->getClient(client_socket)->setNickname(nickname);
 		send(client_socket, response.c_str(), response.size(), 0);
 	}
 }

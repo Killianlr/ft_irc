@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/22 12:40:23 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:37:46 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	CommandHandler::cmdJoin( int client_socket, const std::string& param )
 	Client*		client = server->getClient(client_socket);
 
 	std::istringstream	iss(param);
-	std::cout << "JOIN" << std::endl;
 	if (!(iss >> channelsParam))
 		throw NoSuchChannel();
 	iss >> keysParam;

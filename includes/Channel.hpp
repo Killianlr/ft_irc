@@ -33,7 +33,6 @@ class Channel
 		const std::vector<Client *>		&getMembers() const;
 		int								getUserLimit() const;
 		int								getNbMembers() const;
-		std::vector<Client*>			getClients() const;
 		const std::string				&getTopic() const;
 		std::string						getModeString() const;
 		std::string						getModeParameters() const;

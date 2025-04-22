@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 13:55:20 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/05 15:16:18 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/22 14:48:43 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ class Client
 		bool		registered;
 		bool		operators;
 
-		Channel*	currentChannel;
-
 		Client();
 		
 	public:
@@ -45,7 +43,6 @@ class Client
 		bool				isAuthenticated();
 		bool				isRegistered();
 		bool				isOperators();
-		Channel*			getCurrentChannel() const;
 		
 		void				setNickname( const std::string& );
 		void				setUsername( const std::string& );
@@ -53,7 +50,6 @@ class Client
 		void				setAuthenticated();
 		void				setRegistered();
 		void				setOperators();
-		void				setCurrentChannel(Channel* Channel);
 };
 
 #endif

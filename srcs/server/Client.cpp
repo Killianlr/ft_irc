@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 14:00:09 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/05 15:16:42 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/22 14:48:23 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client( int socket ) : socket(socket), nickname(""), username(""), realname(""), authenticated(false), registered(false), operators(false), currentChannel(NULL) {}
+Client::Client( int socket ) : socket(socket), nickname(""), username(""), realname(""), authenticated(false), registered(false), operators(false) {}
 
 Client::Client() : socket(0), nickname(""), username(""), realname(""), authenticated(false), registered(false), operators(false) {}
 
@@ -70,11 +70,6 @@ bool	Client::isOperators()
 	return (this->operators);
 }
 
-Channel*	Client::getCurrentChannel() const
-{
-	return (this->currentChannel);
-}
-
 void	Client::setNickname( const std::string& str )
 {
 	this->nickname = str;
@@ -106,9 +101,4 @@ void	Client::setOperators()
 {
 	if (this->operators != true)
 		this->operators = true;
-}
-
-void	Client::setCurrentChannel(Channel* Channel)
-{
-	currentChannel = Channel;
 }

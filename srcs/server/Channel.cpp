@@ -33,7 +33,6 @@ void	Channel::addClient(Client* client)
 	if (!hasClient(client))
 	{
 		_members.push_back(client);
-		client->setCurrentChannel(this);
 	}
 }
 

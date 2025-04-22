@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:26:51 by rrichard          #+#    #+#             */
-/*   Updated: 2025/04/21 13:46:52 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:05:37 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	CommandHandler::sendNamesList( Channel* channel, Client* client )
 		if (i + 1 < users.size())
 			names += " ";
 	}
+	std::cout << "Nickname is: " << client->getNickname() << std::endl;
 	std::string reply = ":ft_irc 353 " + client->getNickname() + " = " + channel->getName() + " :" + names + "\r\n";
 	send(client->getSocket(), reply.c_str(), reply.size(), 0);
 
