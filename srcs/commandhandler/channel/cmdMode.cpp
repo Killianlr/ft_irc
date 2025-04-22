@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:06 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/19 16:09:00 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/22 13:01:50 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,11 @@ void    CommandHandler::cmdMode( int client_socket, const std::string& param )
     iss >> channel_name;
 	if (channel_name.empty())
 		throw NeedMoreParamsException("MODE");
-
-    channel = server->getChannel(channel_name);
+		
+	if (channel_name == server->getClient(client_socket)->getNickname())
+		return ;
+		
+	channel = server->getChannel(channel_name);
     if (!channel)
 		throw NoSuchChannel();
 

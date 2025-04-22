@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/19 16:18:11 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/22 12:07:51 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <cstdlib>
 # include <algorithm>
 # include <csignal>
+# include <ctime>
 # include "CommandHandler.hpp"
 # include "Client.hpp"
 # include "Channel.hpp"
