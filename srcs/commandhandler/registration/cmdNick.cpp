@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:39 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/18 15:20:53 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/21 22:42:40 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 {
 	if (!server->getClient(client_socket)->isAuthenticated())
 		throw PasswordMismatchException();
+	
+	if (nickname.empty())
+		throw NeedMoreParamsException("NICK");
+	if (nickname.length() > 16)
+		throw ErroneusNickname(nickname);
 
 	std::vector<const Client*>  clients = server->getListClients();
 	std::string                 response;

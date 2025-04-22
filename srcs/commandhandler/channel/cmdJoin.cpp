@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/21 10:23:30 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/21 23:57:08 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,13 @@ void    CommandHandler::cmdJoin( int client_socket, const std::string& param )
 	for (size_t i = 0; i < channelsList.size(); i++)
 	{
 		std::string channel_name = channelsList[i];
-		if (channel_name.empty() || channel_name[0] != '#')
+
+		if (channel_name.empty() || channel_name[0] != '#' || channel_name.size() > 32)
 			throw NoSuchChannel();
+
 		Channel*	channel = server->getChannel(channel_name);
 		std::string	key = "";
+
 		if (i < keysList.size())
 			key = keysList[i];
 		

@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/18 12:57:27 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/21 22:43:57 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,13 @@ class NoSuchChannel : public IRCException
 {
     public:
         NoSuchChannel();
+};
+
+// ERR_ERRONEUSNICKNAME (432)
+class ErroneusNickname : public IRCException
+{
+	public:
+		ErroneusNickname( const std::string& );
 };
 
 // ERR_NOTONCHANNEL (442)

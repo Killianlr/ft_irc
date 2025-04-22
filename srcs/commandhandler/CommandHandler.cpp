@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/21 21:42:34 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/21 23:57:39 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,24 @@ void	CommandHandler::sendNumericReply( int socket, int numeric, const std::strin
 	{
 		case 1:
 			oss << ":ft_irc 001 " << target << " :Welcome to the ft_irc server\r\n";
+			break;
+		case 2:
+			oss << ":ft_irc 002 " << target << " :Your host is localhost\r\n";
+			break;
+		case 3:
+		{
+			time_t	now = time(NULL);
+			char	buf[64];
+			std::strftime(buf, sizeof(buf), "%a %b %d %Y at %H:%M:%S", std::localtime(&now));
+			oss << ":ft_irc 003 " << target << " :This server was created " << buf << "\r\n";
+			break;
+		}
+		case 4:
+			oss << ":ft_irc 004 " << target << " ft_irc 1.0 o itklo\r\n";
+			break;
+		case 5:
+			oss << ":ft_irc 005 " << target << " CHANMODES=itklo NICKLEN=16 CHANNELLEN=32 :are supported by this server\r\n";
+			break;
 	}
 	std::string	reply = oss.str();
 	send(socket, reply.c_str(), reply.size(), 0);

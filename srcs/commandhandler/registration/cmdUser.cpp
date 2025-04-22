@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdUser.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:32 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 14:52:19 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/22 10:51:38 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,15 @@ void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 	std::string servername = (tokens.size() > 1 ? tokens[2] : "*");
 	std::string realname = tokens[3];
 
-	Client& client = *server->getClient(client_socket);
-	client.setUsername(username);
-	client.setRealname(realname);
-	if (!client.getNickname().empty())
+	Client* client = server->getClient(client_socket);
+	client->setUsername(username);
+	client->setRealname(realname);
+	if (!client->getNickname().empty())
 	{
-		response = ":ft_irc 001 " + client.getNickname() + " :Welcome to the IRC Server\r\n";
-		client.setRegistered();
-		send(client_socket, response.c_str(), response.size(), 0);
+		sendNumericReply(client_socket, 1, client->getNickname());
+		sendNumericReply(client_socket, 2, client->getNickname());
+		sendNumericReply(client_socket, 3, client->getNickname());
+		sendNumericReply(client_socket, 4, client->getNickname());
+		sendNumericReply(client_socket, 5, client->getNickname());
 	}
 }

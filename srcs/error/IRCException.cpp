@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:25:57 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/21 10:10:42 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/21 22:42:25 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ AlreadyRegisteredException::AlreadyRegisteredException() : IRCException(":ft_irc
 PasswordMismatchException::PasswordMismatchException() : IRCException(":ft_irc 464 * :Bad password\r\n") {}
 
 UserNotInChannel::UserNotInChannel( const std::string& nick, const std::string& channel ) : IRCException(":ft_irc 441 " + nick + " " + channel + " :They aren't on that channel\r\n") {}
+
+ErroneusNickname::ErroneusNickname( const std::string& nickname ) : IRCException(":ft_irc 432 " + nickname + " :Erroneus nickname\r\n") {}
 
 NotOnChannelException::NotOnChannelException( const std::string& channel ) : IRCException(":ft_irc 442 " + channel + " :You're not on that channel\r\n") {} 
 
