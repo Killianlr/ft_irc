@@ -1,14 +1,34 @@
-Tests commands mode :
-    /mode (Non operator) : ok
-    /mode #channel +i : ok
-    /mode #channel -i : ok
-    /mode #channel +o target : ok
-    /mode #channel -o target : ok
-    /mode #channel +l limit : ok
-    /mode #channel -l : ok
-    /mode #channel +k password : presque ok
-    /mode #channel -k : ok
 
-    Refuse l'access au channel si le mot de passe ne correspond pas, mais une fois rentrer, il semble qu'il y a plus besoin du mot de passe (bizarre)
-    Comportement bizarre quand tu kick qlq'un d'un channel, il ne peux plus le join
- 
+Connexion sans password                             | OK
+Connexion avec mauvais password                     | OK
+Connexion avec bon password                         | OK
+Connexion avec NICK + USER                          | OK
+Double connexion avec le même NICK                  | OK (msg erreur dans les logs du server, mais pas de reponse cote client)
+
+/join #test                                         | OK
+/join #test 2e fois                                 | OK
+Rejoindre un channel +i sans invitation             | OK (irssi fait de la D en ouvrant une nouvelle window)
+Rejoindre un channel +k sans mot de passe           | OK
+Rejoindre un channel +k avec le bon mot de passe    | OK
+Rejoindre un channel +l alors qu’il est plein       | OK
+JOIN de plusieurs clients dans un même channel      | OK (pas de message envoyer aux autres users deja presents)
+
+Envoi de PRIVMSG à un utilisateur existant          | OK
+Envoi à un utilisateur inexistant                   | KO (invalid channel name)
+Envoi à un channel                                  | OK
+PRIVMSG sans message                                | KO (expected ERR_NOTEXTTOSEND)
+(question pour les messages en general, il faut une limite max de characters ?, que se passe-t-il si on spam ?)
+
+MODE #test +i                                       | OK : Le channel devient invite-only
+MODE #test -i                                       | OK : Plus invite-only
+MODE #test +k secret                                | OK : Ajout mot de passe
+MODE #test -k                                       | OK : Supprime mot de passe
+MODE #test +l 2                                     | OK/KO : Max 2 utilisateurs (Message d'erreur ok, mais si le user essaie de join un channel qu'il avais deja join auparavant, les msg s'affiche, pourtant msg erreur bien present)
+MODE #test -l                                       | OK : Supprime limite
+MODE #test +o user2                                 | OK : Promote user2 opérateur
+MODE #test -o user2                                 | OK : Retire droits op
+
+KICK #test user par un opérateur                    | OK
+KICK par non-op                                     | OK
+INVITE user #test dans channel +i                   | OK (Alors, fonctionne bien, mais, apres un kick, le user peux rejoindre sans mdp, on dois supprimer le user des vector client* members et invited du channel)
+INVITE d’un user déjà dans le channel               | (Invite comme si n'etais pas present, es-ce bon ou mauvais ?)
