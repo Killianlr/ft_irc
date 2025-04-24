@@ -6,13 +6,14 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:39 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/22 15:13:46 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/23 22:38:45 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CommandHandler.hpp"
 #include "IRCException.hpp"
 #include "Channel.hpp"
+#include <set>
 
 void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 {
@@ -46,7 +47,25 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 	{
 		response = ":" + server->getClient(client_socket)->getNickname() + " NICK " + nickname + "\r\n";
 		server->getClient(client_socket)->setNickname(nickname);
-		send(client_socket, response.c_str(), response.size(), 0);
+
+		std::set<int>	notifiedSockets;
+
+		for (std::map<std::string, Channel*>::const_iterator it = server->getChannels().begin(); it != server->getChannels().end(); it++)
+		{
+			if (it->second->hasClient(server->getClient(client_socket)))
+			{
+				const std::vector<Client*>&	members = it->second->getMembers();
+				for (size_t i = 0; i < members.size(); i++)
+				{
+					int sock = members[i]->getSocket();
+					if (notifiedSockets.find(sock) == notifiedSockets.end())
+					{
+						send(sock, response.c_str(), response.size(), 0);
+						notifiedSockets.insert(sock);
+					}
+				}
+			}
+		}
 	}
 }
 

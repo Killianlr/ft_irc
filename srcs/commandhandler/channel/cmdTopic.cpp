@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:26 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/19 16:09:31 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/24 12:23:19 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,6 @@ void	CommandHandler::cmdTopic( int socket, const std::string& param )
 	if (current->isTopicRestricted() && !current->isOperator(server->getClient(socket)))
 		throw ChanOPrivsNeeded(target);
 	current->setTopic(topic);
-	std::string	msg = ":" + requester->getNickname() + " TOPIC " + target + " :" + topic + "\r\n";
+	std::string	msg = ":" + requester->getNickname() + " TOPIC " + target + " " + topic + "\r\n";
 	broadcastToChannel(current, msg);
 }

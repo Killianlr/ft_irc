@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:52:56 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/17 11:13:52 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:54:01 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void    CommandHandler::handleChannelMessage( int client_socket, const std::stri
 void	CommandHandler::handlePrivateMessage( int client_socket, const std::string& target, const std::string& message )
 {
 	if (!server->getClientByNickname(target))
-		throw NoSuchChannel();
+		throw NoSuchNick(target);
 
 	Client*		sender = server->getClient(client_socket);
 	Client*		receiver = server->getClientByNickname(target);
