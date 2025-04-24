@@ -42,6 +42,18 @@ void	Channel::addInvite(Client* client)
 		_invited.push_back(client);
 }
 
+void	Channel::removeInvite( Client* client )
+{
+	for (std::vector<Client*>::iterator it = _invited.begin(); it != _invited.end(); it++)
+	{
+		if (*it == client) 
+		{
+			_invited.erase(it);
+			break ;
+		}
+	}
+}
+
 void	Channel::setOperator(Client* client)
 {
 	_operators.push_back(client);

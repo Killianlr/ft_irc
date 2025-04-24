@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:52:56 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/23 19:54:01 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/24 14:55:11 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void    CommandHandler::handleChannelMessage( int client_socket, const std::stri
 
 	Client*					sender = server->getClient(client_socket);
 	std::vector<Client*>	clients = server->getClientsInChannel(channel);
-	std::string				response = ":" + sender->getNickname() + " PRIVMSG " + channel + " :" + message + "\r\n";
+	std::string				response = getPrefix(sender) + "PRIVMSG " + channel + " " + message + "\r\n";
 
 	for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); it++)
 	{
@@ -52,7 +52,7 @@ void	CommandHandler::handlePrivateMessage( int client_socket, const std::string&
 
 	Client*		sender = server->getClient(client_socket);
 	Client*		receiver = server->getClientByNickname(target);
-	std::string	response = ":" + sender->getNickname() + " PRIVMSG " + target + " :" + message + "\r\n";
+	std::string	response = getPrefix(sender) + "PRIVMSG " + target + " " + message + "\r\n";
 
 	send(receiver->getSocket(), response.c_str(), response.size(), 0);
 }

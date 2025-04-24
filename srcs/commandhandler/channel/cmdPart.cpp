@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:29:09 by rrichard          #+#    #+#             */
-/*   Updated: 2025/04/24 12:42:49 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/24 14:18:27 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void    CommandHandler::cmdPart( int client_socket, const std::string& param )
 			throw NotOnChannelException(channel_name);
 
 		std::string msg;
-		msg = ":" + server->getClient(client_socket)->getNickname() + " PART " + channel->getName();
+		msg = getPrefix(client) + "PART " + channel->getName();
 		std::cout << reason << std::endl;
 		if (!reason.empty())
 			msg += " " + reason;

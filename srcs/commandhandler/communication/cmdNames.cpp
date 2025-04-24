@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:26:51 by rrichard          #+#    #+#             */
-/*   Updated: 2025/04/23 20:04:23 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/24 18:12:49 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	CommandHandler::sendNamesList( Channel* channel, Client* client )
 		if (i + 1 < users.size())
 			names += " ";
 	}
-	std::cout << ":ft_irc 353 " + client->getNickname() + " = " + channel->getName() + " :" + names + " |" << std::endl;
 	std::string reply = ":ft_irc 353 " + client->getNickname() + " = " + channel->getName() + " :" + names + "\r\n";
 	send(client->getSocket(), reply.c_str(), reply.size(), 0);
 
@@ -62,8 +61,9 @@ void	CommandHandler::cmdNames( int client_socket, const std::string& param )
 
 	for (size_t i = 0; i < channelsList.size(); ++i)
 	{
-		const std::string& chanName = channelsList[i];
-		Channel* channel = server->getChannel(chanName);
+		const std::string&	chanName = channelsList[i];
+		Channel*			channel = server->getChannel(chanName);
+
 		if (channel)
 			sendNamesList(channel, client);
 		else

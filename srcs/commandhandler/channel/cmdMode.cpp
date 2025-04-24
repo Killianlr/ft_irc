@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:06 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/22 13:01:50 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/24 15:23:33 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,13 @@ void    CommandHandler::cmdMode( int client_socket, const std::string& param )
 		return ;
 	}
 	
+	if (modes[0] != '+' && modes[0] != '-')
+		throw UModeUnkownFlag();
     if (!channel->isOperator(server->getClient(client_socket)))
 		throw ChanOPrivsNeeded(channel_name);
 
 	bool	adding = true;
 	size_t i = 0;
-	if (modes[0] != '+' && modes[0] != '-')
-		throw UModeUnkownFlag();
 
     while (i < modes.length())
     {
@@ -120,7 +120,7 @@ void    CommandHandler::cmdMode( int client_socket, const std::string& param )
 		}
 		i++;
     }
-    msg = ":" + (server->getClient(client_socket))->getNickname() + " MODE " + channel_name + " " + modes;
+    msg = getPrefix(server->getClient(client_socket)) + "MODE " + channel_name + " " + modes;
 	std::istringstream	review(param);
 	std::string			piece;
 	

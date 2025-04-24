@@ -41,6 +41,7 @@ class Channel
 		void							addInvite(Client* client);
 		void							removeClient(Client* client);
 		void							removeOperator( Client* client );
+		void							removeInvite( Client* client );
 
 		void							setOperator(Client* client);
 		void							setInviteOnly(bool value);

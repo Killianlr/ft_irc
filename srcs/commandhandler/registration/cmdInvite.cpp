@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:42 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/18 16:47:53 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/24 16:58:40 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,12 @@ void    CommandHandler::cmdInvite(int client_socket, const std::string& param)
 
     channel->addInvite(target);
     
-    msg = ":" + inviter->getNickname() + " INVITE " + target_nick + " :" + channel_name + "\r\n";
+    msg = getPrefix(inviter) + "INVITE " + target_nick + " " + channel_name + "\r\n";
     send(target->getSocket(), msg.c_str(), msg.size(), 0);
+
+	if (channel->isInvite(target))
+	{
+		std::string	reply = ":ft_irc 341 " + inviter->getNickname() + " " + target_nick + " " + channel_name + "\r\n";
+		send(client_socket, reply.c_str(), reply.size(), 0);
+	}
 }

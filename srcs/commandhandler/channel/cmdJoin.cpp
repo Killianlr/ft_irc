@@ -6,13 +6,21 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/24 12:53:09 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/24 16:51:38 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CommandHandler.hpp"
 #include "IRCException.hpp"
 #include "Channel.hpp"
+
+std::string	CommandHandler::getPrefix( const Client* client )
+{
+	std::string prefix;
+
+	prefix = ":" + client->getNickname() + "!" + client->getUsername() + "@localhost ";
+	return (prefix);
+}
 
 void	CommandHandler::cmdJoin( int client_socket, const std::string& param )
 {
@@ -79,7 +87,9 @@ void	CommandHandler::cmdJoin( int client_socket, const std::string& param )
 				throw ChannelIsFull(channel->getName());
 		}
 		channel->addClient(client);
-		response = ":" + client->getNickname() + " JOIN " + channel_name + "\r\n";
+		if (channel->isInvite(client))
+			channel->removeInvite(client);
+		response = getPrefix(client) + "JOIN " + channel_name + "\r\n";
 		broadcastToChannel(channel, response);
 
 		std::string topicMsg = ":ft_irc 332 " + client->getNickname() + " " + channel_name + " :" + channel->getTopic() + "\r\n";

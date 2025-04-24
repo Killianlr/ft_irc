@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:39 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/23 22:38:45 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/24 18:18:54 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@
 
 void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 {
-	if (!server->getClient(client_socket)->isAuthenticated())
+	Client*	client = server->getClient(client_socket);
+
+	if (!client->isAuthenticated())
 		throw PasswordMismatchException();
 
 	if (nickname.empty())
@@ -34,35 +36,33 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 			throw NicknameInUse(nickname);
 	}
 
-	if (server->getClient(client_socket)->getNickname().empty())
+	if (client->getNickname().empty())
 	{
 		server->getClient(client_socket)->setNickname(nickname);
 		if (!server->getClient(client_socket)->getUsername().empty())
 		{
-			response = ":ft_irc 001 " + nickname + " :Welcome to the IRC Server\r\n";
+			response = ":ft_irc 001 " + nickname + " :Welcome to the ft_irc Server\r\n";
 			send(client_socket, response.c_str(), response.size(), 0);
+			return ;
 		}
 	}
-	else
+	response = ":" + client->getNickname() + " NICK " + nickname + "\r\n";
+	client->setNickname(nickname);
+
+	std::set<int>	notifiedSockets;
+
+	for (std::map<std::string, Channel*>::const_iterator it = server->getChannels().begin(); it != server->getChannels().end(); it++)
 	{
-		response = ":" + server->getClient(client_socket)->getNickname() + " NICK " + nickname + "\r\n";
-		server->getClient(client_socket)->setNickname(nickname);
-
-		std::set<int>	notifiedSockets;
-
-		for (std::map<std::string, Channel*>::const_iterator it = server->getChannels().begin(); it != server->getChannels().end(); it++)
+		if (it->second->hasClient(server->getClient(client_socket)))
 		{
-			if (it->second->hasClient(server->getClient(client_socket)))
+			const std::vector<Client*>&	members = it->second->getMembers();
+			for (size_t i = 0; i < members.size(); i++)
 			{
-				const std::vector<Client*>&	members = it->second->getMembers();
-				for (size_t i = 0; i < members.size(); i++)
+				int sock = members[i]->getSocket();
+				if (notifiedSockets.find(sock) == notifiedSockets.end())
 				{
-					int sock = members[i]->getSocket();
-					if (notifiedSockets.find(sock) == notifiedSockets.end())
-					{
-						send(sock, response.c_str(), response.size(), 0);
-						notifiedSockets.insert(sock);
-					}
+					send(sock, response.c_str(), response.size(), 0);
+					notifiedSockets.insert(sock);
 				}
 			}
 		}

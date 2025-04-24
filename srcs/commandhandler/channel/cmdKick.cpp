@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmdKick.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:58:18 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/16 17:16:41 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/24 17:20:50 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,8 @@ void    CommandHandler::cmdKick(int client_socket, const std::string& param)
 		target = server->getClientByNickname(target_nick);
 		if (!target || !channel->hasClient(target))
 			throw UserNotInChannel(target_nick, channel_name);
-		channel->removeClient(target);
-		msg = ":" + kicker->getNickname() +
-					" KICK " + channel_name + " " + target_nick +
-					" :" + reason + "\r\n";
-		
+		msg = getPrefix(kicker) + "KICK " + channel_name + " " + target_nick + " " + reason + "\r\n";
 		broadcastToChannel(channel, msg);
+		channel->removeClient(target);
 	}
 }
