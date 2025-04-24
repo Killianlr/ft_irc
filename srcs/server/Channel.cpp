@@ -44,6 +44,8 @@ void	Channel::addInvite(Client* client)
 
 void	Channel::setOperator(Client* client)
 {
+	if (isOperator(client))
+		return ;
 	_operators.push_back(client);
 }
 
@@ -77,6 +79,14 @@ void	Channel::removeClient(Client* client)
 		if (*it == client)
 		{
 			_members.erase(it);
+			break ;
+		}
+	}
+	for (std::vector<Client*>::iterator it = _invited.begin(); it != _invited.end(); ++it)
+	{
+		if (*it == client)
+		{
+			_invited.erase(it);
 			break ;
 		}
 	}
