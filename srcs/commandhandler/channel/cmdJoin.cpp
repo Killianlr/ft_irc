@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/24 16:51:38 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/25 16:34:45 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,27 +68,26 @@ void	CommandHandler::cmdJoin( int client_socket, const std::string& param )
 		if (i < keysList.size())
 			key = keysList[i];
 		
-		if (!channel)
+		if (channel)
+		{
+			if (channel->isInviteOnly() && !channel->isInvite(client))
+				throw InviteOnlyChan(channel->getName());
+			if (!channel->getKey().empty() && (key != channel->getKey() && !channel->isInvite(client)))
+				throw BadChannelKey(channel->getName());
+			if (channel->getUserLimit() >= 0 && channel->getNbMembers() >= channel->getUserLimit())
+				throw ChannelIsFull(channel->getName());
+		}
+		else if (!channel)
 		{
 			channel = new Channel(channel_name);
 			server->addChannel(channel_name, channel);
 			channel->setOperator(client);
 		}
-		if (channel && channel->isInviteOnly() && !channel->isInvite(client))
-			throw InviteOnlyChan(channel->getName());
-		if (channel && !channel->getKey().empty())
-		{
-			if (key != channel->getKey() && !channel->isInvite(client))
-				throw BadChannelKey(channel->getName());
-		}
-		else if (channel && channel->getUserLimit() >= 0)
-		{
-			if (channel->getNbMembers() >= channel->getUserLimit())
-				throw ChannelIsFull(channel->getName());
-		}
+
 		channel->addClient(client);
 		if (channel->isInvite(client))
-			channel->removeInvite(client);
+			channel->removeInvite(client); // Makes invite one-time only
+
 		response = getPrefix(client) + "JOIN " + channel_name + "\r\n";
 		broadcastToChannel(channel, response);
 

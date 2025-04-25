@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:52:56 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/24 14:55:11 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/25 16:38:00 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void    CommandHandler::cmdPrivmsg( int client_socket, const std::string& param 
 		throw NeedMoreParamsException("PRIVMSG");
 	
 	std::getline(iss >> std::ws, message);
-	if (target[0] == '#' || target[0] == '&')
+	if (target[0] == '#')
 		handleChannelMessage(client_socket, target, message);
 	else
 		handlePrivateMessage(client_socket, target, message);
