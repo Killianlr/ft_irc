@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/22 14:47:53 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/25 11:46:11 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	CommandHandler::sendNumericReply( int socket, int numeric, const std::strin
 			oss << ":ft_irc 004 " << target << " ft_irc 1.0 o itklo\r\n";
 			break;
 		case 5:
-			oss << ":ft_irc 005 " << target << " CHANMODES=itklo NICKLEN=16 CHANNELLEN=32 :are supported by this server\r\n";
+			oss << ":ft_irc 005 " << target << " CHANMODES=itklo NICKLEN=16 CHANTYPES=# CHANNELLEN=32 :are supported by this server\r\n";
 			break;
 	}
 	std::string	reply = oss.str();

@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:39 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/24 18:18:54 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/25 11:45:25 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 		throw NeedMoreParamsException("NICK");
 	if (nickname.length() > 16)
 		throw ErroneusNickname(nickname);
+	if (nickname[0] == '#' || nickname[0] == ':')	
+		throw ErroneusNickname("<invalid>");
 
 	std::vector<const Client*>  clients = server->getListClients();
 	std::string                 response;
