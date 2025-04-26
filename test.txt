@@ -1,3 +1,6 @@
+/part (sans arg) -> invalid channel name 
+/names (affiche pas les users arrivers apres)
+/topic (non operateur peux modifier par defaut, a moins de /mode +t) (whitespace)
 
 Connexion sans password                             | OK
 Connexion avec mauvais password                     | OK
@@ -23,12 +26,12 @@ MODE #test +i                                       | OK : Le channel devient in
 MODE #test -i                                       | OK : Plus invite-only
 MODE #test +k secret                                | OK : Ajout mot de passe
 MODE #test -k                                       | OK : Supprime mot de passe
-MODE #test +l 2                                     | OK/KO : Max 2 utilisateurs (Message d'erreur ok, mais si le user essaie de join un channel qu'il avais deja join auparavant, les msg s'affiche, pourtant msg erreur bien present)
+MODE #test +l 2                                     | OK/KO : Max 2 utilisateurs (Message d'erreur ok, mais si le user essaie de join un channel qu'il avais deja join auparavant, les msg s'affiche, pourtant msg erreur bien present) (FIXED)
 MODE #test -l                                       | OK : Supprime limite
 MODE #test +o user2                                 | OK : Promote user2 opérateur
 MODE #test -o user2                                 | OK : Retire droits op
 
 KICK #test user par un opérateur                    | OK
 KICK par non-op                                     | OK
-INVITE user #test dans channel +i                   | OK (Alors, fonctionne bien, mais, apres un kick, le user peux rejoindre sans mdp, on dois supprimer le user des vector client* members et invited du channel)
+INVITE user #test dans channel +i                   | OK (Alors, fonctionne bien, mais, apres un kick, le user peux rejoindre sans mdp, on dois supprimer le user des vector client* members et invited du channel) (FIXED)
 INVITE d’un user déjà dans le channel               | (Invite comme si n'etais pas present, es-ce bon ou mauvais ?)

@@ -22,11 +22,29 @@ INCS = -I$(INC_PATH)
 ################################################################################
 
 SRCS_FILES =	main.cpp \
-				IRCServer.cpp \
-				IRCException.cpp \
-				CommandHandler.cpp \
-				Client.cpp \
-				Channel.cpp \
+\
+					commandhandler/channel/cmdJoin.cpp \
+					commandhandler/channel/cmdKick.cpp \
+					commandhandler/channel/cmdMode.cpp \
+					commandhandler/channel/cmdTopic.cpp \
+					commandhandler/channel/cmdPart.cpp \
+				\
+					commandhandler/communication/cmdNames.cpp \
+					commandhandler/communication/cmdPing.cpp \
+					commandhandler/communication/cmdPrivmsg.cpp \
+				\
+					commandhandler/registration/cmdInvite.cpp \
+					commandhandler/registration/cmdNick.cpp \
+					commandhandler/registration/cmdPass.cpp \
+					commandhandler/registration/cmdUser.cpp \
+				\
+				commandhandler/CommandHandler.cpp \
+\
+				error/IRCException.cpp \
+\
+				server/Channel.cpp \
+				server/Client.cpp \
+				server/IRCServer.cpp \
 				
 
 ################################################################################
@@ -69,6 +87,11 @@ all: $(OBJS_PATH) $(NAME)
 
 $(OBJS_PATH):
 	@mkdir -p $(OBJS_PATH)
+	@mkdir -p .obj/commandhandler/channel
+	@mkdir -p .obj/commandhandler/registration
+	@mkdir -p .obj/commandhandler/communication
+	@mkdir -p .obj/error
+	@mkdir -p .obj/server
 
 $(NAME): $(OBJS_PATH) $(OBJS)
 	@$(call run_and_test, $(CC) $(CFLAGS) -o $@ $(OBJS))

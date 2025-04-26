@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/15 12:07:33 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/19 16:17:14 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,23 @@
 #include "IRCException.hpp"
 #include "Channel.hpp"
 
+extern volatile sig_atomic_t	running;
+
 IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) 
 {
 	channels["#general"] = new Channel("#general");
 }
 
-IRCServer::~IRCServer() {}
+IRCServer::~IRCServer()
+{
+	for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
+		delete it->second;
+	channels.clear();
+	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
+		delete it->second;
+	clients.clear();
+	poll_fds.clear();
+}
 
 void    IRCServer::start()
 {
@@ -64,11 +75,13 @@ void    IRCServer::runEventLoop()
 	int			poll_count;
 
 	poll_fds.push_back(server_poll_fd);
-	while (true)
+	while (running)
 	{
 		poll_count = poll(&poll_fds[0], poll_fds.size(), POLL_TIMEOUT);
 		if (poll_count == -1)
 		{
+			if (!running)
+				break ;
 			perror("poll");
 			exit(EXIT_FAILURE);
 		}
@@ -77,6 +90,7 @@ void    IRCServer::runEventLoop()
 		for (size_t i = 1; i < poll_fds.size(); i++)
 			if (poll_fds[i].revents & POLLIN)
 				handleClientData(poll_fds[i].fd);
+		checkCurrentChannels();
 	}
 }
 
@@ -97,7 +111,6 @@ void	IRCServer::handleNewConnection()
 	clients[new_socket] = new Client(new_socket);
 	std::cout << "New client connected: " << new_socket << std::endl;
 	channels["#general"]->addClient(clients[new_socket]); // ajout du nouveau client dans le channel #general
-	
 }
 
 void	IRCServer::handleClientData( int client_socket )
@@ -208,4 +221,27 @@ std::vector<Client*>	IRCServer::getClientsInChannel( const std::string& channel_
 	if (it == channels.end())
 		return (empty);
 	return (it->second->getMembers());
+}
+
+const std::map<std::string, Channel*>& IRCServer::getChannels() const
+{
+    return channels;
+}
+
+void	IRCServer::checkCurrentChannels()
+{
+	if (channels.size() <= 1)
+		return ;
+	for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end();)
+	{
+		Channel *chan = it->second;
+		if (chan && chan->getNbMembers() == 0)
+		{
+			std::map<std::string, Channel*>::iterator toErase = it++;
+			delete chan;
+			channels.erase(toErase);
+		}
+		else
+			it++;
+	}
 }

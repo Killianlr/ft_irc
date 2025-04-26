@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   IRCServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rrichard42 <rrichard42@student.42.fr>      +#+  +:+       +#+        */
+/*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/15 12:01:22 by rrichard42       ###   ########.fr       */
+/*   Updated: 2025/04/22 12:07:51 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 # include <netinet/in.h>
 # include <unistd.h>
 # include <cstdlib>
+# include <algorithm>
+# include <csignal>
+# include <ctime>
 # include "CommandHandler.hpp"
 # include "Client.hpp"
 # include "Channel.hpp"
@@ -59,6 +62,7 @@ class IRCServer
 		void	runEventLoop();
 		void	handleNewConnection();
 		void	handleClientData( int );
+		void	checkCurrentChannels();
 	
 	public:
 		std::map<int, std::string>	clientBuffers;
@@ -66,17 +70,18 @@ class IRCServer
 		IRCServer( int, const std::string& );
 		~IRCServer();
 
-		Client*						getClient( int ) const;
-		Client*						getClientByNickname( const std::string& ) const;
-		std::vector<const Client*>	getListClients() const;
-		const std::string&			getPassword() const;
-		Channel*					getChannel( std::string );
+		Client*									getClient( int ) const;
+		Client*									getClientByNickname( const std::string& ) const;
+		std::vector<const Client*>				getListClients() const;
+		const std::string&						getPassword() const;
+		Channel*								getChannel( std::string );
 		
-		void						start();
-		void						closeClientConnection( int );
-		void						addChannel(std::string channel_name, Channel* newChannel);
-		bool						isClientInChannel( int, const std::string& ) const;
-		std::vector<Client*>		getClientsInChannel( const std::string& ) const;
+		void									start();
+		void									closeClientConnection( int );
+		void									addChannel(std::string channel_name, Channel* newChannel);
+		bool									isClientInChannel( int, const std::string& ) const;
+		std::vector<Client*>					getClientsInChannel( const std::string& ) const;
+		const std::map<std::string, Channel*>&	getChannels() const;
 };
 
 #endif
