@@ -56,7 +56,8 @@ void	Channel::removeInvite( Client* client )
 
 void	Channel::setOperator(Client* client)
 {
-	_operators.push_back(client);
+	if (!isOperator(client))
+		_operators.push_back(client);
 }
 
 void	Channel::removeOperator( Client* client )
