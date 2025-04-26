@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/25 16:34:45 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/25 22:32:46 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ void	CommandHandler::cmdJoin( int client_socket, const std::string& param )
 		}
 
 		channel->addClient(client);
+		client->addChannel(channel);
 		if (channel->isInvite(client))
 			channel->removeInvite(client); // Makes invite one-time only
 

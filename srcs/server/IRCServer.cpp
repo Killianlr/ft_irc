@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/25 16:54:10 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/26 09:31:22 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ void	IRCServer::handleNewConnection()
 
 	clients[new_socket] = new Client(new_socket);
 	std::cout << "New client connected: " << new_socket << std::endl;
-	channels["#general"]->addClient(clients[new_socket]); // ajout du nouveau client dans le channel #general
 }
 
 void	IRCServer::handleClientData( int client_socket )
@@ -182,6 +181,14 @@ void	IRCServer::addChannel(std::string channel_name, Channel* newChannel)
 
 void	IRCServer::closeClientConnection( int client_socket )
 {
+	Client*	client = getClient(client_socket);
+
+	if (client)
+	{
+		const std::vector<Channel*>& chans = client->getChannels();
+		for (size_t i = 0; i < chans.size(); i++)
+			chans[i]->removeClient(client);
+	}
 	close(client_socket);
 	delete clients[client_socket];
 	clientBuffers.erase(client_socket);

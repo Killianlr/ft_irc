@@ -92,6 +92,7 @@ void	Channel::removeClient(Client* client)
 			break ;
 		}
 	}
+	client->removeChannel(this);
 }
 
 bool	Channel::hasClient(const Client* client) const

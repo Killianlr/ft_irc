@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 14:00:09 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/22 14:48:23 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/25 23:13:03 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ Client&	Client::operator=( const Client& other )
 		this->authenticated = other.authenticated;
 		this->registered = other.registered;
 		this->operators = other.operators;
+		this->channels = other.channels;
 	}
 	return (*this);
 }
@@ -101,4 +102,38 @@ void	Client::setOperators()
 {
 	if (this->operators != true)
 		this->operators = true;
+}
+
+const std::vector<Channel*>&	Client::getChannels() const
+{
+	return (this->channels);
+}
+
+void	Client::addChannel( Channel* channel )
+{
+	this->channels.push_back(channel);
+}
+
+void	Client::removeChannel( Channel* channel )
+{
+	for (std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); it++)
+	{
+		if (channel == (*it))
+		{
+			it = channels.erase(it);
+			break;
+		}
+	}
+}
+
+void	Client::removeChannel( const std::string& channel )
+{
+	for (std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); it++)
+	{
+		if (channel == (*it)->getName())
+		{
+			it = channels.erase(it);
+			break;
+		}
+	}
 }
