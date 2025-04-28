@@ -6,13 +6,14 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/26 09:31:22 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/28 10:51:39 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "IRCServer.hpp"
 #include "IRCException.hpp"
 #include "Channel.hpp"
+#include <fcntl.h>
 
 extern volatile sig_atomic_t	running;
 
@@ -54,6 +55,12 @@ void    IRCServer::setupServer()
 		perror("setsockopt");
 		exit(EXIT_FAILURE);
 	}
+	if (fcntl(server_fd, F_SETFL, O_NONBLOCK) < 0)
+	{
+		perror("fcntl");
+		close(server_fd);
+		exit(EXIT_FAILURE);
+	}
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(port);
@@ -77,7 +84,7 @@ void    IRCServer::runEventLoop()
 	poll_fds.push_back(server_poll_fd);
 	while (running)
 	{
-		poll_count = poll(&poll_fds[0], poll_fds.size(), POLL_TIMEOUT);
+		poll_count = poll(&poll_fds[0], poll_fds.size(), -1);
 		if (poll_count == -1)
 		{
 			if (!running)
@@ -104,6 +111,12 @@ void	IRCServer::handleNewConnection()
 	{
 		perror("accept");
 		return ;
+	}
+	if (fcntl(new_socket, F_SETFL, O_NONBLOCK) < 0)
+	{
+		perror("fcntl");
+		close(server_fd);
+		exit(EXIT_FAILURE);
 	}
 	t_pollfd	new_poll_fd = {new_socket, POLLIN, 0};
 	poll_fds.push_back(new_poll_fd);
