@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/28 10:51:39 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/28 13:24:10 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,19 @@ void    IRCServer::setupServer()
 	if (server_fd == -1)
 	{
 		perror("socket");
-		exit(EXIT_FAILURE);
+		running = 0;
 	}
 	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
 	{
+		close(server_fd);
 		perror("setsockopt");
-		exit(EXIT_FAILURE);
+		running = 0;
 	}
 	if (fcntl(server_fd, F_SETFL, O_NONBLOCK) < 0)
 	{
 		perror("fcntl");
 		close(server_fd);
-		exit(EXIT_FAILURE);
+		running = 0;
 	}
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
@@ -67,12 +68,12 @@ void    IRCServer::setupServer()
 	if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
 	{
 		perror("bind");
-		exit(EXIT_FAILURE);
+		running = 0;
 	}
 	if (listen(server_fd, 3) < 0)
 	{
 		perror("listen");
-		exit(EXIT_FAILURE);
+		running = 0;
 	}
 }
 
@@ -87,10 +88,9 @@ void    IRCServer::runEventLoop()
 		poll_count = poll(&poll_fds[0], poll_fds.size(), -1);
 		if (poll_count == -1)
 		{
-			if (!running)
-				break ;
+			running = 0;
 			perror("poll");
-			exit(EXIT_FAILURE);
+			return ;
 		}
 		if (poll_fds[0].revents & POLLIN) //Tests whether new data or a new connection is available on the server socket(poll_fds[0]) by performing bitwise AND
 			handleNewConnection();
@@ -109,14 +109,15 @@ void	IRCServer::handleNewConnection()
 	
 	if (new_socket == -1)
 	{
+		running = 0;
 		perror("accept");
 		return ;
 	}
 	if (fcntl(new_socket, F_SETFL, O_NONBLOCK) < 0)
 	{
+		running = 0;
 		perror("fcntl");
-		close(server_fd);
-		exit(EXIT_FAILURE);
+		close(new_socket);
 	}
 	t_pollfd	new_poll_fd = {new_socket, POLLIN, 0};
 	poll_fds.push_back(new_poll_fd);
