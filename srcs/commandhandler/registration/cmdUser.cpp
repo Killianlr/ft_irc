@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:32 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/26 09:32:37 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:32:40 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,6 @@ void	CommandHandler::cmdUser( int client_socket, const std::string& userInfo )
 		sendNumericReply(client_socket, 3, client->getNickname());
 		sendNumericReply(client_socket, 4, client->getNickname());
 		sendNumericReply(client_socket, 5, client->getNickname());
-		server->getChannel("#general")->addClient(client);
+		server->getChannel("#general")->addClient(client);		
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/28 13:24:10 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:32:00 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 extern volatile sig_atomic_t	running;
 
-IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1) 
+IRCServer::IRCServer( int port, const std::string& password ) : port(port), password(password), server_fd(-1)
 {
 	channels["#general"] = new Channel("#general");
 }
