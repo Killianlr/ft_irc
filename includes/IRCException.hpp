@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 14:52:19 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/21 22:43:57 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/30 18:16:43 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,12 @@ class NotOnChannelException : public IRCException
 {
     public:
         NotOnChannelException( const std::string& );
+};
+
+class NotRegistered : public IRCException
+{
+	public:
+		NotRegistered();
 };
 
 // ERR_CHANOPRIVSNEEDED (482)

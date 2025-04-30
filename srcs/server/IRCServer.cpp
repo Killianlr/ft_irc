@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:43:49 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/29 15:32:00 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/30 16:54:50 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ IRCServer::~IRCServer()
 	channels.clear();
 	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
 		delete it->second;
+	for (std::vector<t_pollfd>::iterator it = poll_fds.begin(); it != poll_fds.end(); ++it)
+		close(it->fd);
 	clients.clear();
 	poll_fds.clear();
 }
@@ -129,7 +131,7 @@ void	IRCServer::handleNewConnection()
 void	IRCServer::handleClientData( int client_socket )
 {
 	char			buffer[1024];
-	int				valread = read(client_socket, buffer, 1024);
+	int				valread = recv(client_socket, buffer, 1024, 0);
 	CommandHandler	handler(this);
 
 	if (valread <= 0)

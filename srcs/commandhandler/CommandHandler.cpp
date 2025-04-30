@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:29:16 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/25 21:26:51 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/30 18:16:30 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,11 @@ void	CommandHandler::handleCommand( int client_socket, const std::string& messag
 	try
 	{
 		if (commands.find(command) != commands.end())
+		{
+			if (command != "NICK" && command != "USER" && command != "PASS" && !server->getClient(client_socket)->isRegistered())
+				throw NotRegistered();
 			(this->*commands[command])(client_socket, param);
+		}
 		else
 			std::cerr << "Unknown command from client " << std::endl;
 	}

@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 17:44:15 by robincanava       #+#    #+#             */
-/*   Updated: 2025/04/22 12:07:51 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/30 18:13:54 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,7 @@
 # include "Client.hpp"
 # include "Channel.hpp"
 
-#define ROUGE "\033[0;31m"
-#define VERT "\033[0;32m"
-#define BLEU "\033[0;34m"
-#define MAGENTA "\033[0;35m"
-#define RESET   "\033[0m"
-
-
 typedef struct pollfd t_pollfd;
-
-const int	POLL_TIMEOUT = 1000;
 
 class Client;
 class Channel;

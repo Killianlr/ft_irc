@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 11:25:57 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/21 22:42:25 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/30 18:16:37 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ UserNotInChannel::UserNotInChannel( const std::string& nick, const std::string& 
 ErroneusNickname::ErroneusNickname( const std::string& nickname ) : IRCException(":ft_irc 432 " + nickname + " :Erroneus nickname\r\n") {}
 
 NotOnChannelException::NotOnChannelException( const std::string& channel ) : IRCException(":ft_irc 442 " + channel + " :You're not on that channel\r\n") {} 
+
+NotRegistered::NotRegistered() : IRCException(":ft_irc 451 * :You have not registered\r\n") {}
 
 ChannelIsFull::ChannelIsFull( const std::string& channel ) : IRCException(":ft_irc 471 " + channel + " :Cannot join channel (+l)\r\n") {}
 

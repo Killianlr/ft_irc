@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:51:39 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/29 15:50:55 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/30 16:43:23 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	CommandHandler::cmdNick( int client_socket, const std::string& nickname )
 	}
 	
 	client->setNickname(nickname);
-	if (!client->isRegistered())
+	if (!client->getUsername().empty() && !client->isRegistered())
 	{
 		client->setRegistered();
 		sendNumericReply(client_socket, 1, client->getNickname());

@@ -6,7 +6,7 @@
 /*   By: rrichard <rrichard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 14:57:48 by rrichard42        #+#    #+#             */
-/*   Updated: 2025/04/26 18:40:15 by rrichard         ###   ########.fr       */
+/*   Updated: 2025/04/30 17:19:54 by rrichard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	CommandHandler::cmdJoin( int client_socket, const std::string& param )
 	if (!keysParam.empty())
 	{
 		start = 0;
-		while ((pos = keysParam.find(',', start) != std::string::npos))
+		while ((pos = keysParam.find(',', start)) != std::string::npos)
 		{
 			keysList.push_back(keysParam.substr(start, pos - start));
 			start = pos + 1;
